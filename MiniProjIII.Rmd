@@ -8,7 +8,9 @@ Side notes to make creative and more interesting to read amoung the many project
 
 It is not about the destination but the journey. MacLeish is a valueable asset for the Smith community. It has  approximately four miles of built trail for use by field station visitors. Insuring accessibilty is important for all levels of hiking experience and helps us curate a fun experience for visitors. We aimed to classify these trails as “Easy,” “Moderate,” or “Difficult” based on their length and change in elevation. We will utalize spatial data to develop a heuristic that will classify these (or any other) trails based on their difficulty.
 
-**Bonus** we could look at weather as a variable and take into account how close trails are to wetland patches etc. So that we can rate difficulty based on weather conditions in the interest of people who need to maintain and use those trails.
+**Bonus** 1. we could look at weather as a variable and take into account how close trails are to wetland patches etc. So that we can rate difficulty based on weather conditions in the interest of people who need to maintain and use those trails.
+          2. We could make the map interactive
+          3. we could make an interactive based on live weather data and talk
 **Side Note** To work with elevation.
 
 counters 1:5000
@@ -25,6 +27,8 @@ library(dplyr)
 library(sf)
 library(etl)
 library(macleish)
+library(leaflet)
+elcontour<- st_read("hp214.shp") # note for sofia. When you download make sure that the files from hp214 is in the same folder as your folder. We changed this so it should be done for you in the git file
 ```
 
 
