@@ -42,7 +42,14 @@ names(macleish_layers)
 ```
 
 ```{r}
-#Joules plays with data
-macleish_layers[["streams"]]
+#joules uploads elevation data in manner we can work with
+dsn <- path.expand("noho_contour")
+dsn
+noho_elev <- read_sf(dsn)
+#highest to lowest elevation in northampton
+noho_elev %>%
+  st_transform(4326)%>%
+  arrange(desc(SHAPE_LEN))
+
 
 ```
