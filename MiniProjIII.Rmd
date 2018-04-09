@@ -28,11 +28,21 @@ library(sf)
 library(etl)
 library(macleish)
 library(leaflet)
-elcontour<- st_read("hp214.shp") # note for sofia. When you download make sure that the files from hp214 is in the same folder as your folder. We changed this so it should be done for you in the git file
+url <- "http://download.massgis.digital.mass.gov/shapefiles/contours5k/hp214.zip"
+local_file <- basename(url)
+download.file(url, destfile = local_file)
+unzip(local_file, exdir = "noho_contour")
 ```
 
 
 ```{r}
+#Delete later. what is in this package
+names(macleish_layers)
+#things of interest, landmarks, trails, streams
+```
 
+```{r}
+#Joules plays with data
+macleish_layers[["streams"]]
 
 ```
