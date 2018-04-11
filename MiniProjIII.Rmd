@@ -5,6 +5,7 @@ date: "9 April 2018"
 output: 
   html_document:
   code_folding: hide
+  df_print: paged
 ---
 Side notes to make creative and more interesting to read amoung the many projects.
 
