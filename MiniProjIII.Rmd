@@ -2,8 +2,9 @@
 title: "It’s Not About the Destination but the Journey"
 author: "Juliane Donahue Bombosch, Cai Ytsma, Sofia Salcedo"
 date: "9 April 2018"
-output: html_document:
-          df_print: paged
+output: 
+  html_document:
+  code_folding: hide
 ---
 Side notes to make creative and more interesting to read amoung the many projects.
 
@@ -19,8 +20,7 @@ counters 1:5000
 
 MAssGIS for 3 foot intervals but start with 1: 2,5000
 
-CONTOURS250K_ARC for thirty foot intervals. it is smaller and yeet. 
-
+CONTOURS250K_ARC for thirty foot intervals. it is smaller and yeet
 
 
 ```{r}
@@ -52,6 +52,7 @@ noho_elev <- read_sf(dsn)
 noho_elev %>%
   st_transform(4326)%>%
   arrange(desc(SHAPE_LEN))
-
-
 ```
+
+
+
