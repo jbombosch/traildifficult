@@ -53,12 +53,5 @@ noho_elev %>%
   arrange(desc(SHAPE_LEN))
 ```
 
-#Map of the elevation in Northampton (in feeets)
 
-Reminder: if you write plot you get all the circles instead of something nice looking
-```{r}
-mac_plot <- leaflet() %>%
-  #add in the macleish data
-  #bike maps???
-```
 
