@@ -2,7 +2,8 @@
 title: "It’s Not About the Destination but the Journey"
 author: "Juliane Donahue Bombosch, Cai Ytsma, Sofia Salcedo"
 date: "9 April 2018"
-output: html_document
+output: html_document:
+          df_print: paged
 ---
 Side notes to make creative and more interesting to read amoung the many projects.
 
@@ -11,6 +12,7 @@ It is not about the destination but the journey. MacLeish is a valueable asset f
 **Bonus** 1. we could look at weather as a variable and take into account how close trails are to wetland patches etc. So that we can rate difficulty based on weather conditions in the interest of people who need to maintain and use those trails.
           2. We could make the map interactive
           3. we could make an interactive based on live weather data and talk
+          4. It is really easy to manually add markers for landmarks/ we could probably           write a function to do this
 **Side Note** To work with elevation.
 
 counters 1:5000
