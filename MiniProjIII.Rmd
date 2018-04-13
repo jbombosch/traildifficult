@@ -91,7 +91,8 @@ noho_elev <- read_sf(dsn)
 noho_elev %>%
   st_transform(4326)%>%
   arrange(desc(SHAPE_LEN)) %>%
-  mutate(ELEV_CHANGE = ELEV_M/SHAPE_LEN) #elevation change to indicate a steepness over the length of the trail
+  mutate(ELEV_CHANGE = SHAPE_LEN/ELEV_M) %>%#elevation change to indicate a steepness over the length of the trail
+  mutate(DIFFICULTY = ELEV_CHANGE*2 + SHAPE_LEN/100) #divided shape_len by 100 to put the numbers in the same range to make them comparable
 ```
 
 
