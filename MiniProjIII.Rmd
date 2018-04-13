@@ -78,7 +78,7 @@ macleish_layers[["trails"]]%>%
 # do not actually mutate so that we have the same length 
 # then look at coloring the segments
 # if weather season looking at slope and winter snow. Looking at where do we clear trees. none of the trails get close enough to a stream maybe in the future with new stream. But not yet. Seein if they can build one towards the beaver trail. Would not be an easy trail under in optimal weather.
-#seeps on the hillside. east slope. 
+#seeps on the hillside. east slope. that makes things muddier = harder
  
 ```
 
