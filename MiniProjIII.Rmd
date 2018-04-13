@@ -4,8 +4,8 @@ author: "Juliane Donahue Bombosch, Cai Ytsma, Sofia Salcedo"
 date: "9 April 2018"
 output: 
   html_document:
-  code_folding: hide
-  df_print: paged
+    code_folding: hide
+    df_print: paged
 ---
 Side notes to make creative and more interesting to read amoung the many projects.
 
@@ -23,7 +23,7 @@ MAssGIS for 3 foot intervals but start with 1: 2,5000
 
 CONTOURS250K_ARC for thirty foot intervals. it is smaller and yeet
 
-
+The date is `r format(Sys.Date(), "%B %e, %Y")`
 ```{r}
 library(tidyverse)
 library(dplyr)
@@ -35,6 +35,10 @@ url <- "http://download.massgis.digital.mass.gov/shapefiles/contours5k/hp214.zip
 local_file <- basename(url)
 download.file(url, destfile = local_file)
 unzip(local_file, exdir = "noho_contour")
+url2<- "https://github.com/thomaspark/bootswatch.git"
+superhero <- basename(url)
+download.file(url2, destfile = superhero)
+unzip(local_file, exdir = "superhero")
 ```
 
 
@@ -42,7 +46,28 @@ unzip(local_file, exdir = "noho_contour")
 #Delete later. what is in this package
 names(macleish_layers)
 #things of interest, landmarks, trails, streams
+
+macleish_layers[["trails"]]
 ```
+```{r}
+macleish_layers[["trails"]]%>%
+  group_by(name) %>%
+  mutate(computed_length = st_length(geometry))%>%
+  arrange(desc(computed_length))%>%
+  select()
+
+
+#join by geometry. dataframes but need to covert it into an sf otherwise it will not plot. So make into a data frame and join it and then tyrn it back into spacial data
+#cast it to a line string. to get trail
+#percent slope and then total length of segments.
+#short but steep
+# do not actually mutate so that we have the same length 
+# then look at coloring the segments
+# if weather season looking at slope and winter snow. Looking at where do we clear trees. none of the trails get close enough to a stream maybe in the future with new stream. But not yet. Seein if they can build one towards the beaver trail. Would not be an easy trail under in optimal weather.
+#seeps on the hillside. east slope. 
+ 
+```
+
 
 ```{r}
 #joules uploads elevation data in manner we can work with
