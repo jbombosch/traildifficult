@@ -42,32 +42,6 @@ unzip(local_file, exdir = "superhero")
 ```
 
 
-```{r}
-#Delete later. what is in this package
-names(macleish_layers)
-#things of interest, landmarks, trails, streams
-
-macleish_layers[["trails"]]
-```
-```{r}
-macleish_layers[["trails"]]%>%
-  group_by(name) %>%
-  mutate(computed_length = st_length(geometry))%>%
-  arrange(desc(computed_length))%>%
-  select()
-
-
-#join by geometry. dataframes but need to covert it into an sf otherwise it will not plot. So make into a data frame and join it and then tyrn it back into spacial data
-#cast it to a line string. to get trail
-#percent slope and then total length of segments.
-#short but steep
-# do not actually mutate so that we have the same length 
-# then look at coloring the segments
-# if weather season looking at slope and winter snow. Looking at where do we clear trees. none of the trails get close enough to a stream maybe in the future with new stream. But not yet. Seein if they can build one towards the beaver trail. Would not be an easy trail under in optimal weather.
-#seeps on the hillside. east slope. 
- 
-```
-
 
 ```{r}
 #joules uploads elevation data in manner we can work with
@@ -80,5 +54,32 @@ noho_elev %>%
   arrange(desc(SHAPE_LEN))
 ```
 
+
+```{r}
+#Delete later. what is in this package
+names(macleish_layers)
+#things of interest, landmarks, trails, streams
+
+macleish_layers[["contours_3m"]]#need to look at intersection and look at it plot it. trails boundry and elevation.
+
+```
+
+```{r}
+macleish_layers[["trails"]]%>%
+  group_by(name) %>%
+  mutate(computed_length = st_length(geometry))%>%
+  arrange(desc(computed_length))
+
+
+#join by geometry. dataframes but need to covert it into an sf otherwise it will not plot. So make into a data frame and join it and then tyrn it back into spacial data
+#cast it to a line string. to get trail
+#percent slope and then total length of segments.
+#short but steep
+# do not actually mutate so that we have the same length 
+# then look at coloring the segments
+# if weather season looking at slope and winter snow. Looking at where do we clear trees. none of the trails get close enough to a stream maybe in the future with new stream. But not yet. Seein if they can build one towards the beaver trail. Would not be an easy trail under in optimal weather.
+#seeps on the hillside. east slope. 
+ 
+```
 
 
