@@ -31,31 +31,57 @@ library(sf)
 library(etl)
 library(macleish)
 library(leaflet)
-url <- "http://download.massgis.digital.mass.gov/shapefiles/contours5k/hp214.zip"
-local_file <- basename(url)
-download.file(url, destfile = local_file)
-unzip(local_file, exdir = "noho_contour")
-url2<- "https://github.com/thomaspark/bootswatch.git"
-superhero <- basename(url)
-download.file(url2, destfile = superhero)
-unzip(local_file, exdir = "superhero")
 ```
 
-
-
 ```{r}
-#joules uploads elevation data in manner we can work with
-dsn <- path.expand("noho_contour")
-dsn
-noho_elev <- read_sf(dsn)
-#highest to lowest elevation in northampton
-noho_elev %>%
-  st_transform(4326)%>%
-  arrange(desc(SHAPE_LEN))
+require(leaflet)
+map_T_ev <- leaflet() %>%
+  addTiles() %>%
+  addPolylines(data = macleish_layers[["trails"]], weight = 2, popup = ~name, color = "red") %>%
+  addPolylines(data = macleish_layers[["boundary"]], weight = 3, color = "blue") %>%
+  addPolylines(data = macleish_layers[["contours_3m"]], weight = 0.5)
+
+map_T_ev
+
+
+```
+```{r}
+trails_inbound <- macleish_layers[["boundary"]] %>%
+  st_intersection(macleish_layers[["trails"]])%>%
+  st_cast("LINESTRING")
+trail_length <- st_length((trails_inbound))
+
+Our_map <- leaflet(data = c( trails_inbound)) %>%
+  addTiles() %>%
+  addPolygons(data = macleish_layers[["boundary"]], weight = 1, color = "#F0EDED")%>%
+  addPolylines(data = macleish_layers[["trails"]], weight = 2, popup = ~name, color = "red") %>%
+  addPolylines(data = macleish_layers[["contours_3m"]], weight = 0.5)
+
+Our_map
 ```
 
-
 ```{r}
+elev_in <- macleish_layers[["boundary"]] %>%
+  st_intersection(macleish_layers[["contours_3m"]])
+Overlap <- elev_in %>%
+  st_intersection(Trails_In)
+library(leaflet)
+macleish_map <- leaflet() %>%
+  addTiles() %>%
+  addPolygons(data = macleish_layers[["boundary"]], weight = 1)
+macleish_map %>%
+  addPolylines(data = Overlap)
+
+Trails_In <- macleish_layers[["boundary"]] %>%
+  st_intersection(macleish_layers[["trails"]])
+trails_value <- Trails_In %>%
+  st_cast("LINESTRING")
+
+trail_length <- st_length((trails_value))
+
+#filter or remove multipoints from overlap
+#can figure out slope from each intersection. looking at cast
+
 #Delete later. what is in this package
 names(macleish_layers)
 #things of interest, landmarks, trails, streams
