@@ -32,7 +32,7 @@ library(etl)
 library(macleish)
 library(leaflet)
 ```
-
+NEW STUFFF
 ```{r}
 require(leaflet)
 map_T_ev <- leaflet() %>%
@@ -45,6 +45,8 @@ map_T_ev
 
 
 ```
+
+NEW STUFF
 ```{r}
 trails_inbound <- macleish_layers[["boundary"]] %>%
   st_intersection(macleish_layers[["trails"]])%>%
@@ -59,7 +61,7 @@ Our_map <- leaflet(data = c( trails_inbound)) %>%
 
 Our_map
 ```
-
+PLEASE DO NOT ERASE CHUNK BELOW SO THAT I CAN PICK UP WHERE I LEFT OFF AND KNOW WHAT I AM THINKING! :D
 ```{r}
 elev_in <- macleish_layers[["boundary"]] %>%
   st_intersection(macleish_layers[["contours_3m"]])
@@ -89,7 +91,7 @@ names(macleish_layers)
 macleish_layers[["contours_3m"]]#need to look at intersection and look at it plot it. trails boundry and elevation.
 
 ```
-
+THIS IS ALSO PART OF MY THOUGHT PROCESS> PLEASE DO NOT ERASE
 ```{r}
 macleish_layers[["trails"]]%>%
   group_by(name) %>%
@@ -107,18 +109,3 @@ macleish_layers[["trails"]]%>%
 #seeps on the hillside. east slope. that makes things muddier = harder
  
 ```
-
-```{r}
-#joules uploads elevation data in manner we can work with
-dsn <- path.expand("noho_contour")
-dsn
-noho_elev <- read_sf(dsn)
-#highest to lowest elevation in northampton
-noho_elev %>%
-  st_transform(4326)%>%
-  arrange(desc(SHAPE_LEN)) %>%
-  mutate(ELEV_CHANGE = SHAPE_LEN/ELEV_M) %>%#elevation change to indicate a steepness over the length of the trail
-  mutate(DIFFICULTY = ELEV_CHANGE*2 + SHAPE_LEN/100) #divided shape_len by 100 to put the numbers in the same range to make them comparable
-```
-
-
