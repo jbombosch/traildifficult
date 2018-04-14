@@ -47,6 +47,7 @@ trails_inbound <- macleish_layers[["boundary"]] %>%
 # find intersection point of trails and elevation and then make sure that it is in point not multipoint
 trails_elev <- elev %>%
   st_intersection(macleish_layers[["trails"]])
+
 trails_pt<- st_cast(trails_elev, "POINT")
 
 # 1 mile = 1609.34 meters
@@ -61,17 +62,12 @@ trails_slope <- trails_pt %>%
   mutate(slope = abs(c(NA, diff(ELEV_M))), len = abs(c(NA, diff(SHAPE_LEN)))) %>%
   filter(!is.na(slope)) %>%
   summarize(avg_slope_m = mean(slope/len), tot_change = sum(slope))
-<<<<<<< HEAD
 
-factpal <- colorFactor(topo.colors(9), trails$name, 
-                       palette = c('#228B22','#FFFF00','#00FFFF','#FFB90F','#6495ED', '#FF0000','#FF82AB','#836FFF','#FFBBFF'))
-
-# other variables to be mapped
-=======
 ```
 Here are map elements and our final map things
 ```{r}
->>>>>>> ff40ab0f594892d812bb0ba32621160b2efa919f
+
+# other variables to be mapped
 buildings<- macleish_layers[["boundary"]] %>%
   st_intersection(macleish_layers[["buildings"]])
 landmarks<-  macleish_layers[["boundary"]] %>%
@@ -80,7 +76,6 @@ water<-  macleish_layers[["boundary"]] %>%
   st_intersection(macleish_layers[["streams"]])
 factpal <- colorFactor(topo.colors(9), trails$name, 
                        palette = c('#228B22','#FFFF00','#00FFFF','#FFB90F','#6495ED', '#FF0000','#FF82AB','#836FFF','#FFBBFF'))
-
 
 campsite <- tribble(
   ~point, ~lon, ~lat,
@@ -131,49 +126,6 @@ Our_map <- leaflet(data = c( trails_inbound)) %>%
 Our_map
 
 #difficulty by length and average elevation for difficulty
-
-```
-The following chucnk is an example from lab! Sowy 4 confusion
-```{r}
-forest_pal <- colorFactor("Greens", macleish_layers[["forests"]]$Sheet1__Na)
-bechtel <- data.frame(lat = 42.449167, lon = -72.679389)
-m <- leaflet() %>%
-  # Base groups
-  addTiles(group = "OpenStreetMap") %>%
-  addProviderTiles("Esri.WorldTopoMap", group = "Topography") %>%
-  addProviderTiles("Esri.WorldImagery", group = "Satellite") %>%
-  addProviderTiles("Stamen.TonerLite", group = "Toner Lite") %>%
-  # Boundaries
-  addPolygons(data = macleish_layers[["boundary"]], weight = 1, fillOpacity = 0.01, group = "Boundaries") %>%
-#  addPolygons(data = macleish_layers[["property_boundary"]], weight = 1, fill = "red", fillOpacity = 0.1) %>%
-  # Man-Made structures
-  addPolygons(data = macleish_layers[["buildings"]], 
-              weight = 1, popup = ~ name, group = "Structures") %>%
-#  addPolygons(data = macleish_layers[["reservoir"]], 
-#              weight = 1, group = "Structures") %>%
-  addMarkers(data = macleish_layers[["landmarks"]], 
-             popup = ~ Label, group = "Structures") %>%
-  addPolylines(data = macleish_layers[["trails"]], 
-               weight = 1, color = "brown",
-               popup = ~ name, group = "Structures") %>%
-  # Natural elements
-  addPolygons(data = macleish_layers[["forests"]], 
-              color = ~forest_pal(Sheet1__Na), weight = 0.1, 
-              fillOpacity = 0.2,
-              popup = ~ Sheet1__Na, group = "Natural") %>%
-  addPolygons(data = macleish_layers[["wetlands"]], 
-              weight = 1, group = "Natural") %>%
-  addPolylines(data = macleish_layers[["streams"]], 
-               weight = 2, group = "Natural") %>%
-  # Layers control
-  addLayersControl(
-    baseGroups = c("OpenStreetMap", "Topography", "Satellite", "Toner Lite"),
-    overlayGroups = c("Boundaries", "Structures", "Natural"),
-    options = layersControlOptions(collapsed = FALSE)
-  ) %>%
-  setView(lat = bechtel$lat, lng = bechtel$lon, zoom = 15)
-m
-
 ```
 PLEASE DO NOT ERASE CHUNK BELOW SO THAT I CAN PICK UP WHERE I LEFT OFF AND KNOW WHAT I AM THINKING! :D
 ```{r}
@@ -215,6 +167,16 @@ trails_temp <- trails_pt %>%
   st_cast("LINESTRING") %>%
   ungroup()
 
-leaflet() %>%
-  addPolylines(data = trails_temp, weight = 3)
+
+DF_trails1 <- as.data.frame(trails_tep)%>%
+  select(name, slope, shape_leng, color)
+
+
+
+n<- leaflet(data = c( trails_inbound)) %>%
+  addTiles(group = "OpenStreetMap") %>%
+  addProviderTiles("Stamen.TonerLite", group = "Toner Lite") %>% 
+  addPolylines(data = trails_temp, weight, group = "trailpractive")
+le
+
 ```
