@@ -42,10 +42,16 @@ elev <- macleish_layers[["contours_3m"]] %>%
 trails_inbound <- macleish_layers[["boundary"]] %>%
   st_intersection(macleish_layers[["trails"]])%>%
   st_cast("LINESTRING")
-# find intersection point of trails and elevation and then make sure that it is in point not mulitpoint
+# find intersection point of trails and elevation and then make sure that it is in point not multipoint
 trails_elev <- elev %>%
   st_intersection(macleish_layers[["trails"]])
 trails_pt<- st_cast(trails_elev, "POINT")
+
+# 1 mile = 1609.34 meters
+trails <- macleish_layers[["trails"]] %>%
+  mutate(length = st_length(geometry)) %>%
+  group_by(name) %>%
+  summarize(total_length_mile = sum(length)/1609.34)
 
 #slope
 trails_slope <- trails_pt %>%
@@ -55,18 +61,20 @@ trails_slope <- trails_pt %>%
             max_height = max(ELEV_M)) %>%
   mutate(mean_change = (max_height - min_height)/num_change)
 
-trails_slope_elevation <- st_join(trails_pt, trails_slope)
+factpal <- colorFactor(topo.colors(9), trails$name, 
+                       palette = c('#228B22','#FFFF00','#00FFFF','#FFB90F','#6495ED', '#FF0000','#FF82AB','#836FFF','#FFBBFF'))
 
+Our_map <- leaflet(data = c( trails_inbound)) %>%
+  addTiles(group = "OSM (default)") %>% #We know how to add the background but I didn't like the aesthetic....
+  addPolygons(data = macleish_layers[["boundary"]], weight = 3, color = "#01561d", opacity = 0.85)%>%
+  addPolylines(data = macleish_layers[["boundary"]], weight = 3, color = "#185b2e", opacity = 0.65) %>%
+  #addPolylines(data = macleish_layers[["trails"]], weight = 2, popup = ~name, color = "#c900ed") %>%
+  addPolylines(data = elev, weight = 0.78, color = "#011c0a")
+
+Our_map
 
 ```
 
-trail_length <- macleish_layers[["trails"]]%>%
-  mutate(length = st_length(geometry)) %>%
-  group_by(name) %>%
-  summarize(total_length_mile = sum(length)/1609.34)
-
-
-head(trail_elev)
 
 
 ```{r}
