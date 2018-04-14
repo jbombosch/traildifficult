@@ -78,7 +78,6 @@ buildings<- macleish_layers[["boundary"]] %>%
 landmarks<-  macleish_layers[["boundary"]] %>%
   st_intersection(macleish_layers[["landmarks"]])
 
-# Save the campsite data as a tibble 
 campsite <- tribble(
   ~point, ~lon, ~lat,
   "Group Campsite", -72.678154, 42.450976, 
@@ -99,9 +98,6 @@ campsite_marker <- makeIcon(
   iconWidth = 10, iconHeight = 12,
   iconAnchorX = 10, iconAnchorY = 10
 )
-#  iconWidth = 38, iconHeight = 95,
-#iconAnchorX = 22, iconAnchorY = 94
-#map
 
 Our_map <- leaflet(data = c( trails_inbound)) %>%
   addTiles(group = "OpenStreetMap") %>%
