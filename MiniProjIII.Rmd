@@ -62,6 +62,12 @@ trails_slope <- trails_pt %>%
             max_height = max(ELEV_M)) %>%
   mutate(mean_change = (max_height - min_height)/num_change)
 
+#Cai's slope option
+trails_avg_slope <- trails_pt %>%
+  group_by(name) %>%
+  summarize(avg_segment_slope = sd(ELEV_M), N = (n() - 1)) %>%
+  mutate(tot_slope_change = N * avg_segment_slope)
+
 factpal <- colorFactor(topo.colors(9), trails$name, 
                        palette = c('#228B22','#FFFF00','#00FFFF','#FFB90F','#6495ED', '#FF0000','#FF82AB','#836FFF','#FFBBFF'))
 
