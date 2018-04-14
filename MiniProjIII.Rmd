@@ -68,6 +68,20 @@ factpal <- colorFactor(topo.colors(9), trails$name,
 
 # other variables to be mapped
 
+#trail difficulty classified by average slope
+hard <- trails_slope %>%
+  filter(avg_slope_m > 20) #define difficulty
+
+moderate <- trails_slope %>%
+  filter(avg_slope_m < 20, avg_slope_m > 2)
+
+easy <- trails_slope %>%
+  filter(avg_slope_m < 2)
+
+#the dataframes of the slope difficulty split up into three different lists
+print(easy)
+print(moderate)
+print(hard)
 ```
 Here are map elements and our final map things
 ```{r}
@@ -129,9 +143,11 @@ Our_map <- leaflet(data = c( trails_inbound)) %>%
 
 Our_map
 
-#difficulty by length and average elevation for difficulty
 
 ```
+
+
+
 The following chucnk is an example from lab! Sowy 4 confusion
 ```{r}
 forest_pal <- colorFactor("Greens", macleish_layers[["forests"]]$Sheet1__Na)
