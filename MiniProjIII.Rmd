@@ -69,6 +69,8 @@ trails_slope_temp <- trails_pt %>%
   mutate(slope = abs(c(NA, diff(ELEV_M))), len = abs(c(NA, diff(SHAPE_LEN)))) %>%
   filter(!is.na(slope)) %>%
   summarize(avg_slope_m = mean(slope/len), tot_change = sum(slope))
+
+
 ```
 Here are map elements and our final map things
 ```{r}
