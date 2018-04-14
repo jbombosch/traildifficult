@@ -84,12 +84,7 @@ df <- df_trails %>%
 df <- df %>%
   mutate(diff_lvl = sqrt(2*avg_slope_m*len)) %>%
   arrange(name)
-df_diffindex_trail <- lapply(diff_index, FUN = NEED A FUNCTION TO ORDER )
-
-factpal <- colorFactor(topo.colors(9), trails$name, 
-                       palette = c('#228B22','#FFFF00','#00FFFF','#FFB90F','#6495ED', '#FF0000','#FF82AB','#836FFF','#FFBBFF'))
-
-# other variables to be mapped
+#df_diffindex_trail <- lapply(diff_index, FUN = NEED A FUNCTION TO ORDER )
 
 #trail difficulty classified by average slope
 hard <- trails_slope %>%
