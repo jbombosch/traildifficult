@@ -74,19 +74,33 @@ factpal <- colorFactor(topo.colors(9), trails$name,
 # other variables to be mapped
 buildings<- macleish_layers[["boundary"]] %>%
   st_intersection(macleish_layers[["buildings"]])
+landmarks<-  macleish_layers[["boundary"]] %>%
+  st_intersection(macleish_layers[["landmarks"]])
+
+redmarkercustom <- makeIcon(
+  iconUrl = "http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|e85141&chf=a,s,ee00FFFF",
+  iconWidth = 8, iconHeight = 12,
+  iconAnchorX = 10, iconAnchorY = 10
+)
+#  iconWidth = 38, iconHeight = 95,
+#iconAnchorX = 22, iconAnchorY = 94
+#map
 
 Our_map <- leaflet(data = c( trails_inbound)) %>%
-  addTiles() %>% #We know how to add the background but I didn't like the aesthetic....
+  addTiles(group = "OpenStreetMap") %>%
+  addProviderTiles("Stamen.TonerLite", group = "Toner Lite") %>% 
   addPolygons(data = macleish_layers[["boundary"]], weight = 3, color = "#01561d", fillOpacity = 0.5)%>%
   addPolylines(data = macleish_layers[["boundary"]], weight = 3, color = "#185b2e", opacity = 0.65) %>%
   #addPolylines(data = macleish_layers[["trails"]], weight = 2, popup = ~name, color = "#c900ed") %>%
   addPolylines(data = elev, weight = 0.78, color = "#004400")%>%
   addPolygons(data = buildings, color = "202120", stroke = FALSE, fillOpacity = 0.65, weight = 1, popup = ~name, group = "Structures")%>%
-  addMarkers(data = macleish_layers[["landmarks"]], 
-             popup = ~ Label, group = "Structures", icon = )
+  addMarkers(data = landmarks, 
+             popup = ~ Label, group = "Structures", icon = redmarkercustom )
   
 
 Our_map
+
+
 
 ```
 ```{r}
