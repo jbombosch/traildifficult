@@ -57,19 +57,9 @@ trails <- macleish_layers[["trails"]] %>%
 #slope
 trails_slope <- trails_pt %>%
   group_by(name) %>%
-  summarize(num_change = n(),
-            min_height = min(ELEV_M),
-            max_height = max(ELEV_M)) %>%
-  mutate(mean_change = (max_height - min_height)/num_change)
-
-#Cai's slope option
-trails_slope_temp <- trails_pt %>%
-  group_by(name) %>%
   mutate(slope = abs(c(NA, diff(ELEV_M))), len = abs(c(NA, diff(SHAPE_LEN)))) %>%
   filter(!is.na(slope)) %>%
   summarize(avg_slope_m = mean(slope/len), tot_change = sum(slope))
-
-#MAKE COLOR GRADIENT PER SEGMENT CORRELATE TO SLOPE
 
 factpal <- colorFactor(topo.colors(9), trails$name, 
                        palette = c('#228B22','#FFFF00','#00FFFF','#FFB90F','#6495ED', '#FF0000','#FF82AB','#836FFF','#FFBBFF'))
@@ -216,4 +206,16 @@ factpal <- colorFactor(topo.colors(9), trails$name,
 # if weather season looking at slope and winter snow. Looking at where do we clear trees. none of the trails get close enough to a stream maybe in the future with new stream. But not yet. Seein if they can build one towards the beaver trail. Would not be an easy trail under in optimal weather.
 #seeps on the hillside. east slope. that makes things muddier = harder
  
+```
+
+```{r}
+trails_temp <- trails_pt %>%
+  group_by(name) %>%
+  mutate(slope = abs(c(NA, diff(ELEV_M))), len = abs(c(NA, diff(SHAPE_LEN)))) %>%
+  filter(!is.na(slope)) %>%
+  st_cast("LINESTRING") %>%
+  ungroup()
+
+leaflet() %>%
+  addPolylines(data = trails_temp, weight = 3)
 ```
