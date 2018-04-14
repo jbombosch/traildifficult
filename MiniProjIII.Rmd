@@ -31,24 +31,43 @@ library(sf)
 library(etl)
 library(macleish)
 library(leaflet)
+proj4_aea <- "+proj=aea +lat_1=29.5 +lat_2=45.5 +lat_0=37.5 +lon_0=-96 +x_0=0 +y_0=0 +ellps=GRS80 +datum=NAD83 +units=m +no_defs"
 ```
 NEW STUFF
 ```{r}
+# layer has the same projection 
 elev <- macleish_layers[["contours_3m"]] %>%
   st_transform(4326) 
-
+# find intersection point of trails and within Macleish 
 trails_inbound <- macleish_layers[["boundary"]] %>%
   st_intersection(macleish_layers[["trails"]])%>%
   st_cast("LINESTRING")
+# find intersection point of trails and elevation and then make sure that it is in point not mulitpoint
+trails_elev <- elev %>%
+  st_intersection(macleish_layers[["trails"]])
+trails_pt<- st_cast(trails_elev, "POINT")
 
-trails_elev <- macleish_layers[["boundary"]] %>%
-  st_intersection(elev)
-trail_point <- st_cast(tails_elev, "POINT")
-trail_length <- st_length((trails_inbound))
+#slope
+trails_slope <- trails_pt %>%
+  group_by(name) %>%
+  summarize(num_change = n(),
+            min_height = min(ELEV_M),
+            max_height = max(ELEV_M)) %>%
+  mutate(mean_change = (max_height - min_height)/num_change)
 
+trails_slope_elevation <- st_join(trails_pt, trails_slope)
 
 
 ```
+
+trail_length <- macleish_layers[["trails"]]%>%
+  mutate(length = st_length(geometry)) %>%
+  group_by(name) %>%
+  summarize(total_length_mile = sum(length)/1609.34)
+
+
+head(trail_elev)
+
 
 ```{r}
 Our_map <- leaflet(data = c( trails_inbound)) %>%
@@ -89,6 +108,10 @@ THIS IS ALSO PART OF MY THOUGHT PROCESS> PLEASE DO NOT ERASE
 trails_inbound%>%
   mutate(computed_length = st_length(geometry))%>%
   group_by(desc(name))
+
+# Define the palette for categorical data 
+factpal <- colorFactor(topo.colors(9), trails$name, 
+                       palette = c('#228B22','#FFFF00','#00FFFF','#FFB90F','#6495ED', '#FF0000','#FF82AB','#836FFF','#FFBBFF'))
 
 #join by geometry. dataframes but need to covert it into an sf otherwise it will not plot. So make into a data frame and join it and then tyrn it back into spacial data
 #cast it to a line string. to get trail
