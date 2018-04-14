@@ -32,32 +32,32 @@ library(etl)
 library(macleish)
 library(leaflet)
 ```
-NEW STUFFF
+NEW STUFF
 ```{r}
-require(leaflet)
-map_T_ev <- leaflet() %>%
-  addTiles() %>%
-  addPolylines(data = macleish_layers[["trails"]], weight = 2, popup = ~name, color = "red") %>%
-  addPolylines(data = macleish_layers[["boundary"]], weight = 3, color = "blue") %>%
-  addPolylines(data = macleish_layers[["contours_3m"]], weight = 0.5)
+elev <- macleish_layers[["contours_3m"]] %>%
+  st_transform(4326) 
 
-map_T_ev
+trails_inbound <- macleish_layers[["boundary"]] %>%
+  st_intersection(macleish_layers[["trails"]])%>%
+  st_cast("LINESTRING")
+
+trails_elev <- macleish_layers[["boundary"]] %>%
+  st_intersection(elev)
+trail_point <- st_cast(tails_elev, "POINT")
+trail_length <- st_length((trails_inbound))
+
 
 
 ```
 
-NEW STUFF
 ```{r}
-trails_inbound <- macleish_layers[["boundary"]] %>%
-  st_intersection(macleish_layers[["trails"]])%>%
-  st_cast("LINESTRING")
-trail_length <- st_length((trails_inbound))
-
 Our_map <- leaflet(data = c( trails_inbound)) %>%
   addTiles() %>%
-  addPolygons(data = macleish_layers[["boundary"]], weight = 1, color = "#F0EDED")%>%
-  addPolylines(data = macleish_layers[["trails"]], weight = 2, popup = ~name, color = "red") %>%
-  addPolylines(data = macleish_layers[["contours_3m"]], weight = 0.5)
+  addPolygons(data = macleish_layers[["boundary"]], weight = 3, color = "#185b2e")%>%
+  addPolylines(data = macleish_layers[["boundary"]], weight = 3, color = "#0b2d16") %>%
+  addPolylines(data = macleish_layers[["trails"]], weight = 2, popup = ~name, color = "#c900ed") %>%
+  addPolylines(data = elev, weight = 0.5)
+
 
 Our_map
 ```
@@ -67,15 +67,10 @@ elev_in <- macleish_layers[["boundary"]] %>%
   st_intersection(macleish_layers[["contours_3m"]])
 Overlap <- elev_in %>%
   st_intersection(Trails_In)
-library(leaflet)
-macleish_map <- leaflet() %>%
-  addTiles() %>%
-  addPolygons(data = macleish_layers[["boundary"]], weight = 1)
-macleish_map %>%
-  addPolylines(data = Overlap)
 
 Trails_In <- macleish_layers[["boundary"]] %>%
   st_intersection(macleish_layers[["trails"]])
+
 trails_value <- Trails_In %>%
   st_cast("LINESTRING")
 
@@ -88,16 +83,12 @@ trail_length <- st_length((trails_value))
 names(macleish_layers)
 #things of interest, landmarks, trails, streams
 
-macleish_layers[["contours_3m"]]#need to look at intersection and look at it plot it. trails boundry and elevation.
-
 ```
 THIS IS ALSO PART OF MY THOUGHT PROCESS> PLEASE DO NOT ERASE
 ```{r}
-macleish_layers[["trails"]]%>%
-  group_by(name) %>%
+trails_inbound%>%
   mutate(computed_length = st_length(geometry))%>%
-  arrange(desc(computed_length))
-
+  group_by(desc(name))
 
 #join by geometry. dataframes but need to covert it into an sf otherwise it will not plot. So make into a data frame and join it and then tyrn it back into spacial data
 #cast it to a line string. to get trail
