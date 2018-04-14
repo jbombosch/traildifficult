@@ -69,14 +69,16 @@ trails_slope_temp <- trails_pt %>%
   filter(!is.na(slope)) %>%
   summarize(avg_slope_m = mean(slope/len), tot_change = sum(slope))
 
-factpal <- colorFactor(topo.colors(9), trails$name, 
-                       palette = c('#228B22','#FFFF00','#00FFFF','#FFB90F','#6495ED', '#FF0000','#FF82AB','#836FFF','#FFBBFF'))
-
 # other variables to be mapped
 buildings<- macleish_layers[["boundary"]] %>%
   st_intersection(macleish_layers[["buildings"]])
 landmarks<-  macleish_layers[["boundary"]] %>%
   st_intersection(macleish_layers[["landmarks"]])
+water<-  macleish_layers[["boundary"]] %>%
+  st_intersection(macleish_layers[["streams"]])
+factpal <- colorFactor(topo.colors(9), trails$name, 
+                       palette = c('#228B22','#FFFF00','#00FFFF','#FFB90F','#6495ED', '#FF0000','#FF82AB','#836FFF','#FFBBFF'))
+
 
 campsite <- tribble(
   ~point, ~lon, ~lat,
@@ -110,12 +112,23 @@ Our_map <- leaflet(data = c( trails_inbound)) %>%
   addMarkers(data = landmarks, 
              popup = ~ Label, group = "Structures", icon = redmarkercustom )%>%
   addMarkers(data = camp_neu, 
-             popup = ~ point, group = "Structures", icon = campsite_marker )#cneed to fix icon
+             popup = ~ point, group = "Structures", icon = campsite_marker )%>%
+    addPolygons(data = macleish_layers[["forests"]], 
+              color = ~forest_pal(Sheet1__Na), weight = 0.1, 
+              fillOpacity = 0.2,
+              popup = ~ Sheet1__Na, group = "Natural") %>%
+  addPolygons(data = macleish_layers[["wetlands"]], 
+              weight = 1, group = "Natural Elements")%>%
+    addPolylines(data = water, 
+               weight = 2, group = "Natural Elements")%>%
+  addLayersControl(
+    overlayGroups = c("Boundaries", "Structures", "Natural"), # we will add polylines for the level of difficulty then we can group by category.
+    options = layersControlOptions(collapsed = FALSE))
 
 
 Our_map
 
-
+#difficulty by length and average elevation for difficulty
 
 ```
 ```{r}
