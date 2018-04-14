@@ -69,9 +69,6 @@ Here are map elements and our final map things
 
 # other variables to be mapped
 
-factpal <- colorFactor(topo.colors(9), trails$name, 
-                       palette = c('#228B22','#FFFF00','#00FFFF','#FFB90F','#6495ED', '#FF0000','#FF82AB','#836FFF','#FFBBFF'))
-
 buildings<- macleish_layers[["boundary"]] %>%
   st_intersection(macleish_layers[["buildings"]])
 landmarks<-  macleish_layers[["boundary"]] %>%
