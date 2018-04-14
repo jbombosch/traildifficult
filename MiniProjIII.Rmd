@@ -47,6 +47,7 @@ trails_inbound <- macleish_layers[["boundary"]] %>%
 # find intersection point of trails and elevation and then make sure that it is in point not multipoint
 trails_elev <- elev %>%
   st_intersection(macleish_layers[["trails"]])
+
 trails_pt<- st_cast(trails_elev, "POINT")
 
 # 1 mile = 1609.34 meters
@@ -82,9 +83,13 @@ easy <- trails_slope %>%
 print(easy)
 print(moderate)
 print(hard)
+
 ```
 Here are map elements and our final map things
 ```{r}
+
+# other variables to be mapped
+
 buildings<- macleish_layers[["boundary"]] %>%
   st_intersection(macleish_layers[["buildings"]])
 landmarks<-  macleish_layers[["boundary"]] %>%
@@ -93,7 +98,6 @@ water<-  macleish_layers[["boundary"]] %>%
   st_intersection(macleish_layers[["streams"]])
 factpal <- colorFactor(topo.colors(9), trails$name, 
                        palette = c('#228B22','#FFFF00','#00FFFF','#FFB90F','#6495ED', '#FF0000','#FF82AB','#836FFF','#FFBBFF'))
-
 
 campsite <- tribble(
   ~point, ~lon, ~lat,
@@ -189,6 +193,9 @@ m <- leaflet() %>%
   setView(lat = bechtel$lat, lng = bechtel$lon, zoom = 15)
 m
 
+
+#difficulty by length and average elevation for difficulty
+
 ```
 PLEASE DO NOT ERASE CHUNK BELOW SO THAT I CAN PICK UP WHERE I LEFT OFF AND KNOW WHAT I AM THINKING! :D
 ```{r}
@@ -230,6 +237,16 @@ trails_temp <- trails_pt %>%
   st_cast("LINESTRING") %>%
   ungroup()
 
-leaflet() %>%
-  addPolylines(data = trails_temp, weight = 3)
+
+DF_trails1 <- as.data.frame(trails_tep)%>%
+  select(name, slope, shape_leng, color)
+
+
+
+n<- leaflet(data = c( trails_inbound)) %>%
+  addTiles(group = "OpenStreetMap") %>%
+  addProviderTiles("Stamen.TonerLite", group = "Toner Lite") %>% 
+  addPolylines(data = trails_temp, weight, group = "trailpractive")
+le
+
 ```
