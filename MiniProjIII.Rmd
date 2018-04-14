@@ -1,7 +1,7 @@
 ---
 title: "It’s Not About the Destination but the Journey"
 author: "Juliane Donahue Bombosch, Cai Ytsma, Sofia Salcedo"
-date: "9 April 2018"
+date: "15 April 2018"
 output: 
   html_document:
     code_folding: hide
@@ -32,9 +32,10 @@ library(etl)
 library(macleish)
 library(leaflet)
 proj4_aea <- "+proj=aea +lat_1=29.5 +lat_2=45.5 +lat_0=37.5 +lon_0=-96 +x_0=0 +y_0=0 +ellps=GRS80 +datum=NAD83 +units=m +no_defs"
-#devtools::install_github("beanumber/macleish")
+devtools::install_github("beanumber/macleish")
 ```
 NEW STUFF
+Here is some set up stuff
 ```{r}
 # layer has the same projection 
 elev <- macleish_layers[["contours_3m"]] %>%
@@ -68,8 +69,9 @@ trails_slope_temp <- trails_pt %>%
   mutate(slope = abs(c(NA, diff(ELEV_M))), len = abs(c(NA, diff(SHAPE_LEN)))) %>%
   filter(!is.na(slope)) %>%
   summarize(avg_slope_m = mean(slope/len), tot_change = sum(slope))
-
-# other variables to be mapped
+```
+Here are map elements and our final map things
+```{r}
 buildings<- macleish_layers[["boundary"]] %>%
   st_intersection(macleish_layers[["buildings"]])
 landmarks<-  macleish_layers[["boundary"]] %>%
@@ -131,6 +133,7 @@ Our_map
 #difficulty by length and average elevation for difficulty
 
 ```
+The following chucnk is an example from lab! Sowy 4 confusion
 ```{r}
 forest_pal <- colorFactor("Greens", macleish_layers[["forests"]]$Sheet1__Na)
 bechtel <- data.frame(lat = 42.449167, lon = -72.679389)
@@ -171,34 +174,9 @@ m <- leaflet() %>%
   setView(lat = bechtel$lat, lng = bechtel$lon, zoom = 15)
 m
 
-
-```
-
-```{r}
-Our_map <- leaflet(data = c( trails_inbound)) %>%
-  addTiles() %>%
-  addPolygons(data = macleish_layers[["boundary"]], weight = 3, color = "#185b2e")%>%
-  addPolylines(data = macleish_layers[["boundary"]], weight = 3, color = "#0b2d16") %>%
-  addPolylines(data = macleish_layers[["trails"]], weight = 2, popup = ~name, color = "#c900ed") %>%
-  addPolylines(data = elev, weight = 0.5)
-
-
-Our_map
 ```
 PLEASE DO NOT ERASE CHUNK BELOW SO THAT I CAN PICK UP WHERE I LEFT OFF AND KNOW WHAT I AM THINKING! :D
 ```{r}
-elev_in <- macleish_layers[["boundary"]] %>%
-  st_intersection(macleish_layers[["contours_3m"]])
-Overlap <- elev_in %>%
-  st_intersection(Trails_In)
-
-Trails_In <- macleish_layers[["boundary"]] %>%
-  st_intersection(macleish_layers[["trails"]])
-
-trails_value <- Trails_In %>%
-  st_cast("LINESTRING")
-
-trail_length <- st_length((trails_value))
 
 #filter or remove multipoints from overlap
 #can figure out slope from each intersection. looking at cast
