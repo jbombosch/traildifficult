@@ -77,9 +77,25 @@ buildings<- macleish_layers[["boundary"]] %>%
 landmarks<-  macleish_layers[["boundary"]] %>%
   st_intersection(macleish_layers[["landmarks"]])
 
+# Save the campsite data as a tibble 
+campsite <- tribble(
+  ~point, ~lon, ~lat,
+  "Group Campsite", -72.678154, 42.450976, 
+  "Remote campsite", -72.679581, 42.458549
+)
+camp_neu <- campsite %>%
+  st_as_sf(coords = c("lon", "lat"))
+
+
 redmarkercustom <- makeIcon(
   iconUrl = "http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|e85141&chf=a,s,ee00FFFF",
   iconWidth = 8, iconHeight = 12,
+  iconAnchorX = 10, iconAnchorY = 10
+)
+
+campsite_marker <- makeIcon(
+  iconUrl = "https://upload.wikimedia.org/wikipedia/commons/9/9a/Legenda_pole_namiotowe.svg",
+  iconWidth = 10, iconHeight = 12,
   iconAnchorX = 10, iconAnchorY = 10
 )
 #  iconWidth = 38, iconHeight = 95,
@@ -91,12 +107,14 @@ Our_map <- leaflet(data = c( trails_inbound)) %>%
   addProviderTiles("Stamen.TonerLite", group = "Toner Lite") %>% 
   addPolygons(data = macleish_layers[["boundary"]], weight = 3, color = "#01561d", fillOpacity = 0.5)%>%
   addPolylines(data = macleish_layers[["boundary"]], weight = 3, color = "#185b2e", opacity = 0.65) %>%
-  #addPolylines(data = macleish_layers[["trails"]], weight = 2, popup = ~name, color = "#c900ed") %>%
+  addPolylines(data = trails, weight = 2, popup = ~name, color = "#4c00ff") %>%
   addPolylines(data = elev, weight = 0.78, color = "#004400")%>%
   addPolygons(data = buildings, color = "202120", stroke = FALSE, fillOpacity = 0.65, weight = 1, popup = ~name, group = "Structures")%>%
   addMarkers(data = landmarks, 
-             popup = ~ Label, group = "Structures", icon = redmarkercustom )
-  
+             popup = ~ Label, group = "Structures", icon = redmarkercustom )%>%
+  addMarkers(data = camp_neu, 
+             popup = ~ point, group = "Structures", icon = campsite_marker )#cneed to fix icon
+
 
 Our_map
 
