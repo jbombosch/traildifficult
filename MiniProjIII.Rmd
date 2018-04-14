@@ -65,7 +65,7 @@ factpal <- colorFactor(topo.colors(9), trails$name,
                        palette = c('#228B22','#FFFF00','#00FFFF','#FFB90F','#6495ED', '#FF0000','#FF82AB','#836FFF','#FFBBFF'))
 
 Our_map <- leaflet(data = c( trails_inbound)) %>%
-  addTiles(group = "OSM (default)") %>% #We know how to add the background but I didn't like the aesthetic....
+  #addTiles() %>% #We know how to add the background but I didn't like the aesthetic....
   addPolygons(data = macleish_layers[["boundary"]], weight = 3, color = "#01561d", opacity = 0.85)%>%
   addPolylines(data = macleish_layers[["boundary"]], weight = 3, color = "#185b2e", opacity = 0.65) %>%
   #addPolylines(data = macleish_layers[["trails"]], weight = 2, popup = ~name, color = "#c900ed") %>%
