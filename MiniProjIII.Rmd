@@ -65,9 +65,9 @@ trails_slope <- trails_pt %>%
 #Cai's slope option
 trails_slope_temp <- trails_pt %>%
   group_by(name) %>%
-  mutate(slope = abs(c(NA, diff(ELEV_M)))) %>%
+  mutate(slope = abs(c(NA, diff(ELEV_M))), len = abs(c(NA, diff(SHAPE_LEN)))) %>%
   filter(!is.na(slope)) %>%
-  summarize(avg_slope = mean(slope), tot_change = sum(slope))
+  summarize(avg_slope_m = mean(slope/len), tot_change = sum(slope))
 
 factpal <- colorFactor(topo.colors(9), trails$name, 
                        palette = c('#228B22','#FFFF00','#00FFFF','#FFB90F','#6495ED', '#FF0000','#FF82AB','#836FFF','#FFBBFF'))
