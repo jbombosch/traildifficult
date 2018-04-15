@@ -71,20 +71,36 @@ df_trails <- as.data.frame(trails_slope) %>%
 df_trails2 <- as.data.frame(trails_temp)%>%
   select(name, slope, len)%>%
   filter(slope>0)
+
+# other variables to be mapped
+```
+=======
+=======
+
 df <- df_trails %>%
   full_join(df_trails2) %>%
   #WE DECIDED TO HAVE DIFFICULTY BY
   mutate(lvl = ((avg_slope_m)*100)) %>%
   arrange(name)
 
+#df_diffindex_trail <- lapply(diff_index, FUN = NEED A FUNCTION TO ORDER )
+
+
+The trail difficulty as grouped together by average slope into easy, moderate, and hard. Is this the same as the trail difficulty grouped by trail length?
+```{r}
 #trail difficulty classified by average slope
+
+hard_slope <- trails_slope %>%
+  filter(avg_slope_m > 20) 
+
 hard <- trails_slope %>%
   filter(avg_slope_m > 20)
 
-moderate <- trails_slope %>%
+
+moderate_slope <- trails_slope %>%
   filter(avg_slope_m < 20, avg_slope_m > 2)
 
-easy <- trails_slope %>%
+easy_slope <- trails_slope %>%
   filter(avg_slope_m < 2)
 
 hardsegments <- df %>%
@@ -97,6 +113,21 @@ easysegments <- df %>%
   filter(lvl < 2)
 
 #the dataframes of the slope difficulty split up into three different lists
+
+print(easy_slope)
+print(moderate_slope)
+print(hard_slope)
+```
+Trail difficulty by length only. 
+Error: both operands of the expression should be in "units" objects
+
+```{r}
+easy_length <- trails %>%
+  filter(total_length_mile < 1) #total_length mile is not showing up as something with untis
+
+moderate_length <- trails %>%
+  filter(total_length_mile > 1, total_length_mile < 5)
+
 print(easy)
 print(moderate)
 print(hard)
@@ -104,6 +135,9 @@ print(easysegments)
 print(moderatesegments)
 print(hardsegments)
 
+
+print(easy_length)
+print(moderate_length)
 ```
 Here are map elements and our final map things
 ```{r}
