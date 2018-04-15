@@ -24,7 +24,7 @@ MAssGIS for 3 foot intervals but start with 1: 2,5000
 CONTOURS250K_ARC for thirty foot intervals. it is smaller and yeet
 
 The date is `r format(Sys.Date(), "%B %e, %Y")`
-```{r echo = FALSE}
+```{r, message = FALSE, warning = FALSE, label = "Set Up"}
 library(tidyverse)
 library(dplyr)
 library(sf)
@@ -36,7 +36,7 @@ devtools::install_github("beanumber/macleish")
 ```
 NEW STUFF
 Here is some set up stuff
-```{r echo = FALSE}
+```{r, message = FALSE, warning = FALSE, label = "Data Manipulating"}
 # find intersection point of trails and elevation
 elev <- macleish_layers[["contours_3m"]] %>%
   st_transform(4326) 
@@ -75,7 +75,7 @@ df_trails2 <- as.data.frame(trails_temp)%>%
 ```
 
 
-```{r echo = FALSE}
+```{r, message = FALSE, warning = FALSE, label = "Merge Into another Code"}
 df <- df_trails %>%
   full_join(df_trails2) %>%
   #WE DECIDED TO HAVE DIFFICULTY BY
@@ -84,7 +84,7 @@ df <- df_trails %>%
   
 ```
 The trail difficulty as grouped together by average slope into easy, moderate, and hard. Is this the same as the trail difficulty grouped by trail length?
-```{r echo = FALSE}
+```{r, message = FALSE, warning = FALSE, label = "Set Up"}
 #trail difficulty classified by average slope
 
 hard_slope <- trails_slope %>%
@@ -136,7 +136,7 @@ print(easy_length)
 print(moderate_length)
 ```
 Here are map elements and our final map things
-```{r echo = FALSE}
+```{r, message = FALSE, warning = FALSE, label = "Our Map Code"}
 # other variables to be mapped
 buildings<- macleish_layers[["boundary"]] %>%
   st_intersection(macleish_layers[["buildings"]])
