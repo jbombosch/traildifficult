@@ -37,29 +37,26 @@ devtools::install_github("beanumber/macleish")
 NEW STUFF
 Here is some set up stuff
 ```{r}
-# layer has the same projection 
+# find intersection point of trails and elevation
 elev <- macleish_layers[["contours_3m"]] %>%
   st_transform(4326) 
-
-# find intersection point of trails and elevation and then make sure that it is in point not multipoint
 trails_inbound <- elev %>%
   st_intersection(macleish_layers[["trails"]])
-
 trails_pt<- st_cast(trails_inbound, "POINT")
-
-# convert to meters
 trails <- macleish_layers[["trails"]] %>%
   group_by(name) %>%
   mutate(length = st_length(geometry)) %>%
-  summarize(total_length_mile = sum(length)/1609.34)
+  summarize(length_m = sum(length)/1609.34)
 
 #slope
-trails_slope <- trails_elev %>%
+trails_slope <- trails_inbound %>%
   group_by(name) %>%
   mutate(slope = abs(c(NA, diff(ELEV_M))), len = abs(c(NA, diff(SHAPE_LEN)))) %>%
   filter(!is.na(slope)) %>%
-  summarize(avg_slope_m = mean(slope/len), tot_change = sum(slope))
+  summarize(avg_slope_m = mean(slope/len), tot_change = sum(slope))%>%
+  st_cast("LINESTRING") 
 
+#trying to turn back into sf
 trails_slope_sf <- trails_slope %>%
   st_as_sf(coords = c("lon", "lat"))
             
@@ -67,9 +64,6 @@ trails_temp <- trails_pt %>%
   group_by(name) %>%
   mutate(slope = abs(c(NA, diff(ELEV_M))), len = abs(c(NA, diff(SHAPE_LEN)))) %>%
   filter(!is.na(slope))
-
-trails_temp_sf<- trails_temp%>%
-  st_as_sf(coords = c("lon", "lat"))
 
 df_trails <- as.data.frame(trails_slope) %>%
   select(name, avg_slope_m)%>%
@@ -84,17 +78,17 @@ df <- df_trails %>%
   arrange(name)
 
 #trail difficulty classified by average slope
-hard <- trails_slope_sf %>%
-  filter(avg_slope_m > 20) #define difficulty
+hard <- trails_slope %>%
+  filter(avg_slope_m > 20)
 
-moderate <- trails_slope_sf %>%
+moderate <- trails_slope %>%
   filter(avg_slope_m < 20, avg_slope_m > 2)
 
-easy <- trails_slope_sf %>%
+easy <- trails_slope %>%
   filter(avg_slope_m < 2)
 
 hardsegments <- df %>%
-  filter(lvl > 20) #define difficulty
+  filter(lvl > 20)
 
 moderatesegments <- df %>%
   filter(lvl < 20, avg_slope_m > 2)
@@ -149,14 +143,14 @@ Our_map <- leaflet(data = c( trails_inbound)) %>%
   addProviderTiles("Stamen.TonerLite", group = "Toner Lite") %>% 
   addPolygons(data = macleish_layers[["boundary"]], weight = 3, color = "#01561d", fillOpacity = 0.5)%>%
   addPolylines(data = macleish_layers[["boundary"]], weight = 3, color = "#185b2e", opacity = 0.65) %>%
-  addCircleMarkers(data = st_cast(trails_elev, "POINT"), color = "purple",radius = 2, popup = ~paste("Trail:",name), group = "Trail Segments") %>%
+  addCircleMarkers(data = st_cast(trails_inbound, "POINT"), color = "purple",radius = 2, popup = ~paste("Trail:",name), group = "Trail Segments") %>%
  addPolylines(data = trails, weight = 2, popup = ~name, color = ~meepmeep(trails$name)) %>%# here is where we would start adding our trails by difficulty average. :)
   addPolylines(data = elev, weight = 0.78, color = "#004400")%>%
-  addPolygons(data = buildings, color = "202120", stroke = FALSE, fillOpacity = 1, weight = 1, popup = ~name, group = "Buildings and Landmarks")%>%
+  addPolygons(data = buildings, color = "202120", stroke = FALSE, fillOpacity = 1, weight = 1, group = "Buildings and Landmarks")%>%
   addMarkers(data = landmarks, 
-             popup = ~ Label, group = "Buildings and Landmarks", icon = redmarkercustom )%>%
+             popup = ~Label, group = "Buildings and Landmarks", icon = redmarkercustom )%>%
   addMarkers(data = camp_neu, 
-             popup = ~ point, group = "Buildings and Landmarks", icon = campsite_marker )%>%
+             popup = ~point, group = "Buildings and Landmarks", icon = campsite_marker )%>%
   addLayersControl(
     overlayGroups = c( "Buildings and Landmarks", "Trail Segments"), # we will add polylines for the level of difficulty then we can group by category.
     options = layersControlOptions(collapsed = FALSE))
