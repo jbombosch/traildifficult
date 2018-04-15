@@ -72,8 +72,8 @@ df_trails2 <- as.data.frame(trails_temp)%>%
   select(name, slope, len)%>%
   filter(slope>0)
 
-# other variables to be mapped
 ```
+
 
 
 df <- df_trails %>%
@@ -81,10 +81,7 @@ df <- df_trails %>%
   #WE DECIDED TO HAVE DIFFICULTY BY
   mutate(lvl = ((avg_slope_m)*100)) %>%
   arrange(name)
-
-#df_diffindex_trail <- lapply(diff_index, FUN = NEED A FUNCTION TO ORDER )
-
-
+  
 The trail difficulty as grouped together by average slope into easy, moderate, and hard. Is this the same as the trail difficulty grouped by trail length?
 ```{r}
 #trail difficulty classified by average slope
