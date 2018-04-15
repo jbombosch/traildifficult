@@ -74,8 +74,7 @@ df_trails2 <- as.data.frame(trails_temp)%>%
 
 # other variables to be mapped
 ```
-=======
-=======
+
 
 df <- df_trails %>%
   full_join(df_trails2) %>%
