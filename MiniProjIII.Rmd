@@ -6,6 +6,7 @@ output: #warnings equal = false
   html_document:
     code_folding: hide
     df_print: paged
+    css: mystyle.css
 ---
 Side notes to make creative and more interesting to read amoung the many projects.
 
@@ -86,7 +87,11 @@ df <- df_trails %>%
 The trail difficulty as grouped together by average slope into easy, moderate, and hard. Is this the same as the trail difficulty grouped by trail length?
 
 this chunk below should totally be turned into a table!!!
-```{r message = FALSE, warning = FALSE, label = "Difficulty Level"}
+```{r, results = 'asis', message = FALSE, warning = FALSE, label = "Difficulty Level"}
+#the chunk below is an example of making a data frame in a table and I (sofia) will use it to figure out how to make a table in the future
+writeLines("td, th { padding : 6px } th { background-color : brown ; color : white; border : 1px solid white; } td { color : brown ; border : 1px solid brown }", con = "mystyle.css")
+dset1 <- head(ToothGrowth)
+knitr::kable(dset1, format = "html")
 #trail difficulty classified by average slope
 
 hard_slope <- trails_slope %>%
