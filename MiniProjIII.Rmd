@@ -72,16 +72,15 @@ df_trails2 <- as.data.frame(trails_temp)%>%
   select(name, slope, len)%>%
   filter(slope>0)
 
-# other variables to be mapped
-```
-=======
-=======
 
 df <- df_trails %>%
   full_join(df_trails2) %>%
   #WE DECIDED TO HAVE DIFFICULTY BY
   mutate(lvl = ((avg_slope_m)*100)) %>%
   arrange(name)
+
+# other variables to be mapped
+```
 
 #df_diffindex_trail <- lapply(diff_index, FUN = NEED A FUNCTION TO ORDER )
 
