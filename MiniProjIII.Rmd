@@ -31,7 +31,7 @@ library(sf)
 library(etl)
 library(macleish)
 library(leaflet)
-proj4_aea <- "+proj=aea +lat_1=29.5 +lat_2=45.5 +lat_0=37.5 +lon_0=-96 +x_0=0 +y_0=0 +ellps=GRS80 +datum=NAD83 +units=m +no_defs"
+
 devtools::install_github("beanumber/macleish")
 ```
 NEW STUFF
@@ -63,12 +63,33 @@ trails_slope <- trails_pt %>%
   filter(!is.na(slope)) %>%
   summarize(avg_slope_m = mean(slope/len), tot_change = sum(slope))
 
+trails_temp <- trails_pt %>%
+  group_by(name) %>%
+  mutate(slope = abs(c(NA, diff(ELEV_M))), len = abs(c(NA, diff(SHAPE_LEN)))) %>%
+  filter(!is.na(slope)) 
 
-factpal <- colorFactor(topo.colors(9), trails$name, 
-                       palette = c('#228B22','#FFFF00','#00FFFF','#FFB90F','#6495ED', '#FF0000','#FF82AB','#836FFF','#FFBBFF'))
+df_trails <- as.data.frame(trails_slope) %>%
+  select(name, avg_slope_m)%>%
+  filter(avg_slope_m>0)
 
+df_trails2 <- as.data.frame(trails_temp)%>%
+  select(name, slope, len, color, geometry)%>%
+  filter(slope>0)
+
+<<<<<<< HEAD
 # other variables to be mapped
 ```
+=======
+df <- df_trails %>%
+  full_join(df_trails2) %>%
+  mutate(total_length_mile = as.numeric(len), 
+        avg_slope_m = as.numeric(avg_slope_m))
+
+df <- df %>%
+  mutate(diff_lvl = sqrt(2*avg_slope_m*len)) %>%
+  arrange(name)
+#df_diffindex_trail <- lapply(diff_index, FUN = NEED A FUNCTION TO ORDER )
+>>>>>>> c2b15704f0e7f174e7105fc748143f7e11b4bc34
 
 The trail difficulty as grouped together by average slope into easy, moderate, and hard. Is this the same as the trail difficulty grouped by trail length?
 ```{r}
@@ -102,9 +123,7 @@ print(moderate_length)
 ```
 Here are map elements and our final map things
 ```{r}
-
 # other variables to be mapped
-
 buildings<- macleish_layers[["boundary"]] %>%
   st_intersection(macleish_layers[["buildings"]])
 landmarks<-  macleish_layers[["boundary"]] %>%
@@ -245,16 +264,7 @@ factpal <- colorFactor(topo.colors(9), trails$name,
 ```
 
 ```{r}
-trails_temp <- trails_pt %>%
-  group_by(name) %>%
-  mutate(slope = abs(c(NA, diff(ELEV_M))), len = abs(c(NA, diff(SHAPE_LEN)))) %>%
-  filter(!is.na(slope)) %>%
-  st_cast("LINESTRING") %>%
-  ungroup()
-
-
-DF_trails1 <- as.data.frame(trails_tep)%>%
-  select(name, slope, shape_leng, color)
+proj4_aea <- "+proj=aea +lat_1=29.5 +lat_2=45.5 +lat_0=37.5 +lon_0=-96 +x_0=0 +y_0=0 +ellps=GRS80 +datum=NAD83 +units=m +no_defs"
 
 
 
@@ -262,6 +272,6 @@ n<- leaflet(data = c( trails_inbound)) %>%
   addTiles(group = "OpenStreetMap") %>%
   addProviderTiles("Stamen.TonerLite", group = "Toner Lite") %>% 
   addPolylines(data = trails_temp, weight, group = "trailpractive")
-le
+
 
 ```
