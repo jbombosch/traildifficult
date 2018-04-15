@@ -101,17 +101,12 @@ The trail difficulty as grouped together by average slope into easy, moderate, a
 
 ```{r, results = 'asis', message = FALSE, warning = FALSE, label = "Difficulty Level", error = FALSE}
 
-<<<<<<< HEAD
-
-=======
 #trail difficulty classified by average slope
 #have all of them, but add another column that says "hard", "easy", or "moderate"
 temp <- data.frame(trails_slope) %>%
   filter(name != "Easy Out") %>%
   select(-geometry)
->>>>>>> 03ce533197f92653de55175e09413c1334a8eeb6
 
-#groupings of the slopes to be shown in the tables below
 ```
 **Table 1.** Trail with the largest elevation change per meter.
 ```{r}
