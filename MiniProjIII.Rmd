@@ -53,8 +53,8 @@ trails_slope <- trails_inbound %>%
   group_by(name) %>%
   mutate(slope = abs(c(NA, diff(ELEV_M))), len = abs(c(NA, diff(SHAPE_LEN)))) %>%
   filter(!is.na(slope)) %>%
-  summarize(avg_slope_m = mean(slope/len), tot_change = sum(slope))%>%
-  st_cast("LINESTRING") 
+  summarize(avg_slope_m = mean(slope/len), tot_change = sum(slope))
+
 
 #trying to turn back into sf
 trails_slope_sf <- trails_slope %>%
