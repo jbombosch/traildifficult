@@ -8,7 +8,7 @@ output: #warnings equal = false
     df_print: paged
     css: mystyle.css
 ---
-Side notes to make creative and more interesting to read amoung the many projects.
+
 
 It is not about the destination but the journey. MacLeish is a valuable asset for the Smith community. It has approximately four miles of maintained trails accessible to visitors. Insuring accessibilty is important for all levels of hiking experience and helps us curate a fun experience for visitors. We aimed to classify these trails as “Easy,” “Moderate,” or “Difficult” based on their length and change in elevation. We will utilize spatial data to develop a heuristic that will classify these (or any other) trails based on their difficulty.
 
@@ -25,7 +25,7 @@ MAssGIS for 3 foot intervals but start with 1: 2,5000
 CONTOURS250K_ARC for thirty foot intervals. it is smaller and yeet
 
 The date is `r format(Sys.Date(), "%B %e, %Y")`
-```{r, message = FALSE, warning = FALSE, label = "Set Up", include = FALSE}
+```{r, message = FALSE, warning = FALSE, label = "Set Up", include = FALSE, error = FALSE}
 library(tidyverse)
 library(dplyr)
 library(sf)
@@ -37,7 +37,7 @@ devtools::install_github("beanumber/macleish")
 ```
 NEW STUFF
 Here is some set up stuff
-```{r, message = FALSE, warning = FALSE, label = "Data Manipulating", include = FALSE}
+```{r, message = FALSE, warning = FALSE, label = "Data Manipulating", include = FALSE, error = FALSE}
 # find intersection point of trails and elevation
 elev <- macleish_layers[["contours_3m"]] %>%
   st_transform(4326) 
@@ -68,7 +68,7 @@ macleish_map
 
 ```
 We will need to remerge these
-```{r}
+```{r, message = FALSE, warning = FALSE, include = FALSE, error = FALSE}
 
 trails <- macleish_layers[["trails"]] %>%
   group_by(name) %>%
@@ -117,36 +117,44 @@ macleish_map
 ```
 
 
-```{r, message = FALSE, warning = FALSE, label = "Merge Into another Code", include = FALSE}
+```{r, message = FALSE, warning = FALSE, label = "Merge Into another Code", include = FALSE, error = FALSE}
 df <- df_trails %>%
   full_join(df_trails2) %>%
   #WE DECIDED TO HAVE DIFFICULTY BY
   mutate(lvl = ((avg_slope_m)*100)) %>%
   arrange(name)
-  
 ```
 The trail difficulty as grouped together by average slope into easy, moderate, and hard. Is this the same as the trail difficulty grouped by trail length?
 
 this chunk below should totally be turned into a table!!!
-```{r, results = 'asis', message = FALSE, warning = FALSE, label = "Difficulty Level"}
-#the chunk below is an example of making a data frame in a table and I (sofia) will use it to figure out how to make a table in the future
-writeLines("td, th { padding : 6px } th { background-color : brown ; color : white; border : 1px solid white; } td { color : brown ; border : 1px solid brown }", con = "mystyle.css")
-dset1 <- head(ToothGrowth)
-knitr::kable(dset1, format = "html")
+```{r, results = 'asis', message = FALSE, warning = FALSE, label = "Difficulty Level", error = FALSE}
+
 #trail difficulty classified by average slope
+#have all of them, but add another column that says "hard", "easy", or "moderate"
 
+
+#groupings of the slopes to be shown in the tables below
 hard_slope <- trails_slope %>%
-  filter(avg_slope_m > 20) 
-
-hard <- trails_slope %>%
-  filter(avg_slope_m > 20)
-
-
+  filter(avg_slope_m > 20) %>%
+  select(name, -geometry) #not able to remove the geometry from the table
 moderate_slope <- trails_slope %>%
-  filter(avg_slope_m < 20, avg_slope_m > 2)
-
+  filter(avg_slope_m < 20, avg_slope_m > 2) %>%
+  select(name)
 easy_slope <- trails_slope %>%
-  filter(avg_slope_m < 2)
+  filter(avg_slope_m < 2) %>%
+  select(name)
+
+writeLines("td, th { padding : 6px } th { background-color : blue ; color : white; border : 1px solid white; } td { color : black ; border : 1px solid blue }", con = "mystyle.css")
+hard_table <- hard_slope 
+  knitr::kable(hard_table, format = "html") 
+
+writeLines("td, th { padding : 6px } th { background-color : blue ; color : white; border : 1px solid white; } td { color : black ; border : 1px solid blue }", con = "mystyle.css")
+moderate_table <- moderate_slope
+knitr::kable(moderate_table, format = "html")
+
+writeLines("td, th { padding : 6px } th { background-color : blue ; color : white; border : 1px solid white; } td { color : black ; border : 1px solid blue }", con = "mystyle.css")
+easy_table <- easy_slope 
+knitr::kable(easy_table, format = "html")
 
 #the dataframes of the slope difficulty split up into three different lists
 hardsegments <- df %>%
@@ -158,15 +166,12 @@ moderatesegments <- df %>%
 easysegments <- df %>%
   filter(lvl < 2)
 
-print(easy_slope)
-print(moderate_slope)
-print(hard_slope)
 ```
 Trail difficulty by length only. 
 Error: both operands of the expression should be in "units" objects
 
 This chunk below should be turned into a table!!!! :) 
-```{r echo = FALSE}
+```{r echo = FALSE, error=FALSE}
 easy_length <- trails %>%
   filter(length_m < 1) #total_length mile is not showing up as something with untis
 
@@ -185,7 +190,7 @@ print(easy_length)
 print(moderate_length)
 ```
 Here are map elements and our final map things
-```{r, message = FALSE, warning = FALSE, label = "Our Map Code"}
+```{r, message = FALSE, warning = FALSE, label = "Our Map Code", error = FALSE}
 # other variables to be mapped
 buildings<- macleish_layers[["boundary"]] %>%
   st_intersection(macleish_layers[["buildings"]])
