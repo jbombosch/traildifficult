@@ -9,7 +9,7 @@ output:
     css: mystyle.css
 ---
 
-It is not about the destination but the journey. The MacLeish field station is a valuable asset for the Smith community. It has approximately four miles of maintained trails accessible to visitors. Insuring accessibilty is important for all levels of hiking experience and will help curate a fun experience for visitors. We aimed to classify these trails as “Easy,” “Moderate,” or “Difficult” based on their length and change in elevation. We will utilize spatial data to develop a heuristic that will classify these (or any other) trails based on their difficulty.
+It's not about the destination but the journey. The MacLeish field station is a valuable asset for the Smith community. It has approximately four miles of maintained trails accessible to visitors. Insuring accessibilty is important for all levels of hiking experience and will help curate a fun experience for visitors. We aimed to classify these trails as “Easy,” “Moderate,” or “Difficult” based on their length and change in elevation. We will utilize spatial data to develop a heuristic that will classify these (or any other) trails based on their difficulty.
 
 The data set used is the macleish package authored by Ben Baumer, as well as other contributors. This data set contains map information of the 260-acre campus, as well as live weather data taken at 10 minute intervals and stored on a computer in McConnell Hall at Smith College. 
 
