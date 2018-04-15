@@ -2,7 +2,7 @@
 title: "It’s Not About the Destination but the Journey"
 author: "Juliane Donahue Bombosch, Cai Ytsma, Sofia Salcedo"
 date: "15 April 2018"
-output: 
+output: #warnings equal = false
   html_document:
     code_folding: hide
     df_print: paged
