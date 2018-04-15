@@ -42,7 +42,33 @@ elev <- macleish_layers[["contours_3m"]] %>%
   st_transform(4326) 
 trails_inbound <- elev %>%
   st_intersection(macleish_layers[["trails"]])
-trails_pt<- st_cast(trails_inbound, "POINT")
+
+# OK so this is what I have been working on. THey look funky. What I did. I have inbound MULTIPOINT cast to POINT and then I turn all Points into multipoint and then I can turn it into a graphable lines string. I think in casting it into point We lost labels on each data point. We lost "name" so to solve this I think we can 1. Figure out how not to lose data in trails_point or 2. We can do each trail indicidually which for time reasons is not great. THis is the most important thing to fix. Once we geth this to work everything following will probably run smoothly and we will have it in a format that we can plot. We can also then delete the data frames that I created yesterday. Until we fix this though please do not delete. KK luv ya and see ya later!
+
+trails_pt<- trails_inbound%>%
+  group_by(name) %>%
+  st_cast( "POINT")
+
+trails_pt2 <- trails_pt %>%
+  group_by(grepl("POINT", name)) %>%
+  summarize(N = n())
+
+trails_linestring <- trails_pt2 %>%
+  st_cast("LINESTRING", name)
+
+trails_linestring<- trails_linestring%>%
+  st_cast()
+
+macleish_map <- leaflet() %>%
+  addTiles() %>%
+  addPolygons(data = trails_linestring, weight = 1)
+
+macleish_map
+
+```
+We will need to remerge these
+```{r}
+
 trails <- macleish_layers[["trails"]] %>%
   group_by(name) %>%
   mutate(length = st_length(geometry)) %>%
@@ -54,11 +80,6 @@ trails_slope <- trails_inbound %>%
   mutate(slope = abs(c(NA, diff(ELEV_M))), len = abs(c(NA, diff(SHAPE_LEN)))) %>%
   filter(!is.na(slope)) %>%
   summarize(avg_slope_m = mean(slope/len), tot_change = sum(slope))
-
-
-#trying to turn back into sf
-trails_slope_sf <- trails_slope %>%
-  st_as_sf(coords = c("lon", "lat"))
             
 trails_temp <- trails_pt %>%
   group_by(name) %>%
@@ -71,6 +92,26 @@ df_trails <- as.data.frame(trails_slope) %>%
 df_trails2 <- as.data.frame(trails_temp)%>%
   select(name, slope, len)%>%
   filter(slope>0)
+
+```
+
+```{r}
+#joules fuckin' around
+trails_pt2 <- trails_pt %>%
+  group_by(grepl("POINT", name)) %>%
+  summarize(N = n())
+
+trails_linestring <- trails_pt2 %>%
+  st_cast("LINESTRING", name)
+
+trails_linestring<- trails_linestring%>%
+  st_cast()
+
+macleish_map <- leaflet() %>%
+  addTiles() %>%
+  addPolygons(data = trails_linestring, weight = 1)
+
+macleish_map
 
 ```
 
