@@ -90,27 +90,6 @@ df_trails2 <- as.data.frame(trails_temp)%>%
 
 ```
 
-```{r}
-#joules fuckin' around
-trails_pt2 <- trails_pt %>%
-  group_by(grepl("POINT", name)) %>%
-  summarize(N = n())
-
-trails_linestring <- trails_pt2 %>%
-  st_cast("LINESTRING", name)
-
-trails_linestring<- trails_linestring%>%
-  st_cast()
-
-macleish_map <- leaflet() %>%
-  addTiles() %>%
-  addPolygons(data = trails_linestring, weight = 1)
-
-macleish_map
-
-```
-
-
 ```{r, message = FALSE, warning = FALSE, label = "Merge Into another Code", include = FALSE, error = FALSE}
 df <- df_trails %>%
   full_join(df_trails2) %>%
@@ -120,34 +99,57 @@ df <- df_trails %>%
 ```
 The trail difficulty as grouped together by average slope into easy, moderate, and hard. Is this the same as the trail difficulty grouped by trail length?
 
-this chunk below should totally be turned into a table!!!
 ```{r, results = 'asis', message = FALSE, warning = FALSE, label = "Difficulty Level", error = FALSE}
 
+<<<<<<< HEAD
 
+=======
+#trail difficulty classified by average slope
+#have all of them, but add another column that says "hard", "easy", or "moderate"
+temp <- data.frame(trails_slope) %>%
+  filter(name != "Easy Out") %>%
+  select(-geometry)
+>>>>>>> 03ce533197f92653de55175e09413c1334a8eeb6
 
 #groupings of the slopes to be shown in the tables below
-hard_slope <- trails_slope %>%
+```
+**Table 1.** Trail with the largest elevation change per meter.
+```{r}
+hard_slope <- temp %>%
   filter(avg_slope_m > 20) %>%
-  select(name, -geometry) #not able to remove the geometry from the table
-moderate_slope <- trails_slope %>%
-  filter(avg_slope_m < 20, avg_slope_m > 2) %>%
-  select(name)
-easy_slope <- trails_slope %>%
-  filter(avg_slope_m < 2) %>%
-  select(name)
+  mutate(Hard_Trails = name, avg_slope_per_m = avg_slope_m, total_elev_change = tot_change) %>%
+  select(-name, -avg_slope_m, -tot_change)
 
 writeLines("td, th { padding : 6px } th { background-color : blue ; color : white; border : 1px solid white; } td { color : black ; border : 1px solid blue }", con = "mystyle.css")
 hard_table <- hard_slope 
   knitr::kable(hard_table, format = "html") 
+```
+
+**Table 2.** Trails with median elevation changes per meter.
+```{r}
+moderate_slope <- temp %>%
+  filter(avg_slope_m < 20, avg_slope_m > 2) %>%
+  mutate(Moderate_Trails = name, avg_slope_per_m = avg_slope_m, total_elev_change = tot_change) %>%
+  select(-name, -avg_slope_m, -tot_change)
 
 writeLines("td, th { padding : 6px } th { background-color : blue ; color : white; border : 1px solid white; } td { color : black ; border : 1px solid blue }", con = "mystyle.css")
 moderate_table <- moderate_slope
 knitr::kable(moderate_table, format = "html")
+```
+
+**Table 3.** Trail with the smallest elevation changes per meter.
+```{r}
+easy_slope <- temp %>%
+  filter(avg_slope_m < 2) %>%
+  mutate(Easy_Trails = name, avg_slope_per_m = avg_slope_m, total_elev_change = tot_change) %>%
+  select(-name, -avg_slope_m, -tot_change)
 
 writeLines("td, th { padding : 6px } th { background-color : blue ; color : white; border : 1px solid white; } td { color : black ; border : 1px solid blue }", con = "mystyle.css")
 easy_table <- easy_slope 
 knitr::kable(easy_table, format = "html")
+```
 
+```{r}
 #the dataframes of the slope difficulty split up into three different lists
 hardsegments <- df %>%
   filter(lvl > 20)
