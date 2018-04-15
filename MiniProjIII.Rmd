@@ -11,6 +11,10 @@ output:
 
 It is not about the destination but the journey. The MacLeish field station is a valuable asset for the Smith community. It has approximately four miles of maintained trails accessible to visitors. Insuring accessibilty is important for all levels of hiking experience and will help curate a fun experience for visitors. We aimed to classify these trails as “Easy,” “Moderate,” or “Difficult” based on their length and change in elevation. We will utilize spatial data to develop a heuristic that will classify these (or any other) trails based on their difficulty.
 
+The data set used is the macleish package authored by Ben Baumer, as well as other contributors. This data set contains map information of the 260-acre campus, as well as live weather data taken at 10 minute intervals and stored on a computer in McConnell Hall at Smith College. 
+
+In this analysis, we used the maps layer, focusing on mapped points of interest, elevation, trails to map the difficulty of the trails.
+
 Today `r format(Sys.Date(), "%B %e, %Y")`.
 
 ```{r, message = FALSE, warning = FALSE, label = "Set Up", include = FALSE, error = FALSE}
@@ -57,7 +61,7 @@ macleish_map <- leaflet() %>%
 macleish_map
 
 ```
-We will need to remerge these
+
 ```{r, message = FALSE, warning = FALSE, include = FALSE, error = FALSE}
 
 trails <- macleish_layers[["trails"]] %>%
@@ -119,8 +123,6 @@ The trail difficulty as grouped together by average slope into easy, moderate, a
 this chunk below should totally be turned into a table!!!
 ```{r, results = 'asis', message = FALSE, warning = FALSE, label = "Difficulty Level", error = FALSE}
 
-#trail difficulty classified by average slope
-#have all of them, but add another column that says "hard", "easy", or "moderate"
 
 
 #groupings of the slopes to be shown in the tables below
@@ -167,13 +169,6 @@ easy_length <- trails %>%
 
 moderate_length <- trails %>%
   filter(length_m > 1, length_m < 5)
-
-#print(easy)
-#print(moderate)
-#print(hard)
-#print(easysegments)
-#print(moderatesegments)
-#print(hardsegments)
 
 
 print(easy_length)
@@ -236,30 +231,8 @@ Our_map
 ```
 
 
-#difficulty by length and average elevation for difficulty
-
-
-PLEASE DO NOT ERASE CHUNK BELOW SO THAT I CAN PICK UP WHERE I LEFT OFF AND KNOW WHAT I AM THINKING! :D
-```{r}
-#Delete later. what is in this package
-names(macleish_layers)
-```
-THIS IS ALSO PART OF MY THOUGHT PROCESS> PLEASE DO NOT ERASE
-```{r}
-trails_inbound%>%
-  mutate(computed_length = st_length(geometry))%>%
-  group_by(desc(name))
-
-#join by geometry. dataframes but need to covert it into an sf otherwise it will not plot. So make into a data frame and join it and then tyrn it back into spacial data
-#cast it to a line string. to get trail
-#percent slope and then total length of segments.
-#short but steep
-# do not actually mutate so that we have the same length 
-# then look at coloring the segments
-# if weather season looking at slope and winter snow. Looking at where do we clear trees. none of the trails get close enough to a stream maybe in the future with new stream. But not yet. Seein if they can build one towards the beaver trail. Would not be an easy trail under in optimal weather.
-#seeps on the hillside. east slope. that makes things muddier = harder
- 
-```
+The Pioneer Valley is a beautiful location, and one of the best ways to experience the valley is through hiking. Many Smith College students want to be able to access this, but most hiking trails are difficult to reach on the Pioneer Valley Public Transport. For example, it takes about thirty minutes to go to Fitzgerald Lake on the bus, but in terms of elevation change and length, the conservation area is far from exciting. The access to a range of trail difficulty is a valuable asset to the students and part of that access is providing information about the difficulty level of different trails both through the elevation changes, as well as length.
 
 Footnotes: 
 [^1] Link to the [repository](https://github.com/jbombosch/traildifficult)
+[^2] Link to the [macleish repository](https://github.com/beanumber/macleish)
