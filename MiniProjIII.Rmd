@@ -24,7 +24,7 @@ MAssGIS for 3 foot intervals but start with 1: 2,5000
 CONTOURS250K_ARC for thirty foot intervals. it is smaller and yeet
 
 The date is `r format(Sys.Date(), "%B %e, %Y")`
-```{r, message = FALSE, warning = FALSE, label = "Set Up"}
+```{r, message = FALSE, warning = FALSE, label = "Set Up", include = FALSE}
 library(tidyverse)
 library(dplyr)
 library(sf)
@@ -36,7 +36,7 @@ devtools::install_github("beanumber/macleish")
 ```
 NEW STUFF
 Here is some set up stuff
-```{r, message = FALSE, warning = FALSE, label = "Data Manipulating"}
+```{r, message = FALSE, warning = FALSE, label = "Data Manipulating", include = FALSE}
 # find intersection point of trails and elevation
 elev <- macleish_layers[["contours_3m"]] %>%
   st_transform(4326) 
@@ -75,7 +75,7 @@ df_trails2 <- as.data.frame(trails_temp)%>%
 ```
 
 
-```{r, message = FALSE, warning = FALSE, label = "Merge Into another Code"}
+```{r, message = FALSE, warning = FALSE, label = "Merge Into another Code", include = FALSE}
 df <- df_trails %>%
   full_join(df_trails2) %>%
   #WE DECIDED TO HAVE DIFFICULTY BY
@@ -84,7 +84,9 @@ df <- df_trails %>%
   
 ```
 The trail difficulty as grouped together by average slope into easy, moderate, and hard. Is this the same as the trail difficulty grouped by trail length?
-```{r, message = FALSE, warning = FALSE, label = "Difficulty Level"}
+
+this chunk below should totally be turned into a table!!!
+```{r message = FALSE, warning = FALSE, label = "Difficulty Level"}
 #trail difficulty classified by average slope
 
 hard_slope <- trails_slope %>%
@@ -117,6 +119,7 @@ print(hard_slope)
 Trail difficulty by length only. 
 Error: both operands of the expression should be in "units" objects
 
+This chunk below should be turned into a table!!!! :) 
 ```{r echo = FALSE}
 easy_length <- trails %>%
   filter(length_m < 1) #total_length mile is not showing up as something with untis
