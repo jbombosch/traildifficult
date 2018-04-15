@@ -2,29 +2,17 @@
 title: "It’s Not About the Destination but the Journey"
 author: "Juliane Donahue Bombosch, Cai Ytsma, Sofia Salcedo"
 date: "15 April 2018"
-output: #warnings equal = false
+output: 
   html_document:
     code_folding: hide
     df_print: paged
     css: mystyle.css
 ---
 
+It is not about the destination but the journey. The MacLeish field station is a valuable asset for the Smith community. It has approximately four miles of maintained trails accessible to visitors. Insuring accessibilty is important for all levels of hiking experience and will help curate a fun experience for visitors. We aimed to classify these trails as “Easy,” “Moderate,” or “Difficult” based on their length and change in elevation. We will utilize spatial data to develop a heuristic that will classify these (or any other) trails based on their difficulty.
 
-It is not about the destination but the journey. MacLeish is a valuable asset for the Smith community. It has approximately four miles of maintained trails accessible to visitors. Insuring accessibilty is important for all levels of hiking experience and helps us curate a fun experience for visitors. We aimed to classify these trails as “Easy,” “Moderate,” or “Difficult” based on their length and change in elevation. We will utilize spatial data to develop a heuristic that will classify these (or any other) trails based on their difficulty.
+Today `r format(Sys.Date(), "%B %e, %Y")`.
 
-**Bonus** 1. we could look at weather as a variable and take into account how close trails are to wetland patches etc. So that we can rate difficulty based on weather conditions in the interest of people who need to maintain and use those trails.
-          2. We could make the map interactive
-          3. we could make an interactive based on live weather data and talk
-          4. It is really easy to manually add markers for landmarks/ we could probably           write a function to do this
-**Side Note** To work with elevation.
-
-counters 1:5000
-
-MAssGIS for 3 foot intervals but start with 1: 2,5000
-
-CONTOURS250K_ARC for thirty foot intervals. it is smaller and yeet
-
-The date is `r format(Sys.Date(), "%B %e, %Y")`
 ```{r, message = FALSE, warning = FALSE, label = "Set Up", include = FALSE, error = FALSE}
 library(tidyverse)
 library(dplyr)
@@ -37,6 +25,8 @@ devtools::install_github("beanumber/macleish")
 ```
 NEW STUFF
 Here is some set up stuff
+
+Insert something about this graphic.....
 ```{r, message = FALSE, warning = FALSE, label = "Data Manipulating", include = FALSE, error = FALSE}
 # find intersection point of trails and elevation
 elev <- macleish_layers[["contours_3m"]] %>%
@@ -267,4 +257,5 @@ trails_inbound%>%
  
 ```
 
-
+Footnotes: 
+[^1] Link to the [repository](https://github.com/jbombosch/traildifficult)
