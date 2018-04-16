@@ -5,7 +5,7 @@ date: "15 April 2018"
 output: 
   html_document:
     code_folding: hide
-    df_print: paged
+    trails_slope_print: paged
     css: mystyle.css
 ---
 
@@ -57,55 +57,48 @@ macleish_map <- leaflet() %>%
 macleish_map
 
 ```
-We will need to remerge these
-```{r, message = FALSE, warning = FALSE, include = FALSE, error = FALSE}
+
+
+
+
+
+
+
+
+
+
+```{r}
+trails_slope <- trails_inbound %>%
+  group_by(name) %>%
+  mutate(slope = abs(c(NA, diff(ELEV_M))), len = abs(c(NA, diff(SHAPE_LEN)))) %>%
+  filter(!is.na(slope)) %>%
+  summarize(avg_slope_m = mean(slope/len), tot_change = sum(slope)) %>%
+  mutate(lvl = ((avg_slope_m)*100)) %>%
+  arrange(name)
 
 trails <- macleish_layers[["trails"]] %>%
   group_by(name) %>%
   mutate(length = st_length(geometry)) %>%
   summarize(length_m = sum(length)/1609.34)
-
-#slope
-trails_slope <- trails_inbound %>%
-  group_by(name) %>%
-  mutate(slope = abs(c(NA, diff(ELEV_M))), len = abs(c(NA, diff(SHAPE_LEN)))) %>%
-  filter(!is.na(slope)) %>%
-  summarize(avg_slope_m = mean(slope/len), tot_change = sum(slope))
-            
-trails_temp <- trails_pt %>%
-  group_by(name) %>%
-  mutate(slope = abs(c(NA, diff(ELEV_M))), len = abs(c(NA, diff(SHAPE_LEN)))) %>%
-  filter(!is.na(slope))
-
-df_trails <- as.data.frame(trails_slope) %>%
-  select(name, avg_slope_m)%>%
-  filter(avg_slope_m>0)
-df_trails2 <- as.data.frame(trails_temp)%>%
-  select(name, slope, len)%>%
-  filter(slope>0)
-
 ```
 
 ```{r, message = FALSE, warning = FALSE, label = "Merge Into another Code", include = FALSE, error = FALSE}
-df <- df_trails %>%
-  full_join(df_trails2) %>%
-  #WE DECIDED TO HAVE DIFFICULTY BY
-  mutate(lvl = ((avg_slope_m)*100)) %>%
-  arrange(name)
+
+
 ```
 The trail difficulty as grouped together by average slope into easy, moderate, and hard. Is this the same as the trail difficulty grouped by trail length?
 
 ```{r, results = 'asis', message = FALSE, warning = FALSE, label = "Difficulty Level", error = FALSE}
+temp <- data.frame(trails_inbound) %>%
+  group_by(name) %>%
+  mutate(slope = abs(c(NA, diff(ELEV_M))), len = abs(c(NA, diff(SHAPE_LEN)))) %>%
+  filter(name != "Easy Out", !is.na(slope)) %>%
+  select(name, SHAPE_LEN, ELEV_M, slope, len) %>%
+  mutate(slope_m = slope / len) %>%
+  summarize(avg_slope_m = mean(slope_m), total_len = sum(SHAPE_LEN), tot_change = sum(slope), lvl = avg_slope_m * 20)
 
-#trail difficulty classified by average slope
-#have all of them, but add another column that says "hard", "easy", or "moderate"
-temp <- data.frame(trails_slope) %>%
-  filter(name != "Easy Out") %>%
-  select(-geometry)
-
-#groupings of the slopes to be shown in the tables below
 ```
-**Table 1.** Trail with the largest elevation change per meter.
+mutate_all(funs(replace(., is.na(.), 0))))
 ```{r}
 hard_slope <- temp %>%
   filter(avg_slope_m > 20) %>%
@@ -116,8 +109,8 @@ writeLines("td, th { padding : 6px } th { background-color : blue ; color : whit
 hard_table <- hard_slope 
   knitr::kable(hard_table, format = "html") 
 ```
+**Table 1.** Trail with the largest elevation change per meter.
 
-**Table 2.** Trails with median elevation changes per meter.
 ```{r}
 moderate_slope <- temp %>%
   filter(avg_slope_m < 20, avg_slope_m > 2) %>%
@@ -128,8 +121,8 @@ writeLines("td, th { padding : 6px } th { background-color : blue ; color : whit
 moderate_table <- moderate_slope
 knitr::kable(moderate_table, format = "html")
 ```
+**Table 2.** Trails with median elevation changes per meter.
 
-**Table 3.** Trail with the smallest elevation changes per meter.
 ```{r}
 easy_slope <- temp %>%
   filter(avg_slope_m < 2) %>%
@@ -140,16 +133,17 @@ writeLines("td, th { padding : 6px } th { background-color : blue ; color : whit
 easy_table <- easy_slope 
 knitr::kable(easy_table, format = "html")
 ```
+**Table 3.** Trail with the smallest elevation changes per meter.
 
 ```{r}
 #the dataframes of the slope difficulty split up into three different lists
-hardsegments <- df %>%
+hardsegments <- trails_slope %>%
   filter(lvl > 20)
 
-moderatesegments <- df %>%
+moderatesegments <- trails_slope %>%
   filter(lvl < 20, avg_slope_m > 2)
 
-easysegments <- df %>%
+easysegments <- trails_slope %>%
   filter(lvl < 2)
 
 ```
