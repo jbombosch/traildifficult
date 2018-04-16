@@ -83,7 +83,9 @@ trails <- macleish_layers[["trails"]] %>%
 
 
 ```
+
 One way to distinguish the difficulty of the trails is through slope. Below are tables breaking up the difficulty into "easy," "moderate," and "hard." These tend to be arbitrary classifications, but are necessary for to distinguish a more intensive hike, such as the Vernal Pool Loop compared to the walk into the station at the beginning of the driveway.
+
 ```{r, results = 'asis', message = FALSE, warning = FALSE, label = "Difficulty Level", error = FALSE}
 temp <- data.frame(trails_inbound) %>%
   group_by(name) %>%
@@ -94,7 +96,8 @@ temp <- data.frame(trails_inbound) %>%
   summarize(avg_slope_m = mean(slope_m), total_len = sum(SHAPE_LEN), tot_change = sum(slope), lvl = avg_slope_m * 20)
 
 ```
-mutate_all(funs(replace(., is.na(.), 0))))
+
+
 ```{r}
 hard_slope <- temp %>%
   filter(avg_slope_m > 20) %>%
@@ -131,18 +134,6 @@ knitr::kable(easy_table, format = "html")
 ```
 **Table 3.** Trail with the smallest elevation changes per meter.
 
-```{r}
-#the dataframes of the slope difficulty split up into three different lists
-hardsegments <- trails_slope %>%
-  filter(lvl > 20)
-
-moderatesegments <- trails_slope %>%
-  filter(lvl < 20, avg_slope_m > 2)
-
-easysegments <- trails_slope %>%
-  filter(lvl < 2)
-
-```
 
 
 ```{r, message = FALSE, warning = FALSE, label = "Our Map Code", error = FALSE}
@@ -199,6 +190,8 @@ Our_map
 
 
 ```
+Length is more easily understood and can just be visually understood in the map above. The Snowmobile Trail is the longest, at 1.6 miles and would be classified as "moderate" based off this, while the entrance and exit trails would be considerably less mileage and rank at an easier level.
+
 There is a very clear use for the ranking of difficulty: a map can be made to be displayed at Macleish that shows both the difficulty by trail length as well as average slope over the hike. With this information, visitors will be more empowered to choose their trail, rather than attempting to figure out a difficulty by the name. This would be a low cost solution: requiring a board at the beginning of the trails, as well as color coded blazes on trees throughout the trails. A good time to mark trails and create a map at the beginning would be during the early summer, when there are interns available at the station who are engaged in similar projects. Blazing could occur concurrently with trail maintenance to further streamline the process. This would require paint and general maintanence for future years, but nothing too labor intensive for the outcome. 
 
 The Pioneer Valley is a beautiful location, and one of the best ways to experience the valley is through hiking. Many Smith College students want to be able to access this, but most hiking trails are difficult to reach on the Pioneer Valley Public Transport. For example, it takes about thirty minutes to go to Fitzgerald Lake on the bus, but in terms of elevation change and length, the conservation area is far from exciting. The access to a range of trail difficulty is a valuable asset to the students and part of that access is providing information about the difficulty level of different trails both through the elevation changes, as well as length.
