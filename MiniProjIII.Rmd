@@ -101,7 +101,6 @@ Our_map <- leaflet(data = c( trails_inbound)) %>%
   addProviderTiles("Stamen.TonerLite", group = "Toner Lite") %>% 
   addPolygons(data = macleish_layers[["boundary"]], weight = 3, color = "#01561d", fillOpacity = 0.5)%>%
   addPolylines(data = macleish_layers[["boundary"]], weight = 3, color = "#185b2e", opacity = 0.65) %>%
-  addCircleMarkers(data = st_cast(trails_inbound, "POINT"), color = "purple",radius = 2, popup = ~paste("Trail:",name), group = "Trail Segments") %>%
  addPolylines(data = trails, weight = 2, popup = ~name, color = ~meepmeep(trails$name)) %>%# here is where we would start adding our trails by difficulty average. :)
   addPolylines(data = elev, weight = 0.78, color = "#004400")%>%
   addPolygons(data = buildings, color = "202120", stroke = FALSE, fillOpacity = 1, weight = 1, group = "Buildings and Landmarks")%>%
