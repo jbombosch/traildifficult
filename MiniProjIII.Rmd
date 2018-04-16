@@ -28,7 +28,6 @@ library(leaflet)
 devtools::install_github("beanumber/macleish")
 ```
 
-
 ```{r, message = FALSE, warning = FALSE, include = FALSE, error = FALSE}
 
 trails <- macleish_layers[["trails"]] %>%
@@ -178,7 +177,7 @@ Our_map
 
 
 ```
-There is a very clear use for the ranking of difficulty: a map can be made to be displayed at Macleish that shows both the difficulty by trail length as well as average slope over the hike. With this information, visitors will be more empowered to choose their trail, rather than attempting to figure out a difficulty by the name. This would be a low cost solution: requiring a board at the beginning of the trails, as well as color coded blazes on trees throughout the trails. This would require paint and general maintanence for future years, but nothing too labor intensive for the outcome.
+There is a very clear use for the ranking of difficulty: a map can be made to be displayed at Macleish that shows both the difficulty by trail length as well as average slope over the hike. With this information, visitors will be more empowered to choose their trail, rather than attempting to figure out a difficulty by the name. This would be a low cost solution: requiring a board at the beginning of the trails, as well as color coded blazes on trees throughout the trails. A good time to mark trails and create a map at the beginning would be during the early summer, when there are interns available at the station who are engaged in similar projects. Blazing could occur concurrently with trail maintenance to further streamline the process. This would require paint and general maintanence for future years, but nothing too labor intensive for the outcome. 
 
 The Pioneer Valley is a beautiful location, and one of the best ways to experience the valley is through hiking. Many Smith College students want to be able to access this, but most hiking trails are difficult to reach on the Pioneer Valley Public Transport. For example, it takes about thirty minutes to go to Fitzgerald Lake on the bus, but in terms of elevation change and length, the conservation area is far from exciting. The access to a range of trail difficulty is a valuable asset to the students and part of that access is providing information about the difficulty level of different trails both through the elevation changes, as well as length.
 
