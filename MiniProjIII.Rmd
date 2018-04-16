@@ -29,7 +29,6 @@ devtools::install_github("beanumber/macleish")
 ```
 
 ```{r, message = FALSE, warning = FALSE, include = FALSE, error = FALSE}
-
 trails <- macleish_layers[["trails"]] %>%
   group_by(name) %>%
   mutate(length = st_length(geometry)) %>%
@@ -53,7 +52,6 @@ df_trails <- as.data.frame(trails_slope) %>%
 df_trails2 <- as.data.frame(trails_temp)%>%
   select(name, slope, len)%>%
   filter(slope>0)
-
 ```
 
 ```{r, message = FALSE, warning = FALSE, label = "Merge Into another Code", include = FALSE, error = FALSE}
