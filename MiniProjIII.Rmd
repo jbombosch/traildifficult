@@ -5,7 +5,7 @@ date: "15 April 2018"
 output: 
   html_document:
     code_folding: hide
-    trails_slope_print: paged
+    df_print: paged
     css: mystyle.css
 ---
 
@@ -57,15 +57,6 @@ macleish_map <- leaflet() %>%
 macleish_map
 
 ```
-
-
-
-
-
-
-
-
-
 
 ```{r}
 trails_slope <- trails_inbound %>%
