@@ -41,7 +41,7 @@ trails <- macleish_layers[["trails"]] %>%
   summarize(length_m = sum(length)/1609.34)
 ```
 
-One way to distinguish the difficulty of the trails is through slope. Below are tables breaking up the difficulty into "easy," "moderate," and "hard." These tend to be arbitrary classifications, but are necessary for to distinguish a more intensive hike, such as the Vernal Pool Loop compared to the walk into the station at the beginning of the driveway.
+Below is a table that shows each trail with two ranks: one of difficulty of the trail through length and one through the difficulty by slope. The scale is out of ten, with the "hardest" being the ten, which is the Snowmobile Trail in both cases.
 
 ```{r, results = 'asis', message = FALSE, warning = FALSE, label = "Difficulty Level", error = FALSE}
 trails_slope <- data.frame(trails_inbound) %>%
