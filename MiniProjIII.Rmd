@@ -15,8 +15,6 @@ The data set used is the macleish package authored by Ben Baumer, as well as oth
 
 In this analysis, we used the maps layer, focusing on mapped points of interest, elevation, trails to map the difficulty of the trails.
 
-Today `r format(Sys.Date(), "%B %e, %Y")`.
-
 ```{r, message = FALSE, warning = FALSE, label = "Set Up", include = FALSE, error = FALSE}
 library(tidyverse)
 library(dplyr)
@@ -29,120 +27,41 @@ devtools::install_github("beanumber/macleish")
 ```
 
 ```{r, message = FALSE, warning = FALSE, include = FALSE, error = FALSE}
-trails <- macleish_layers[["trails"]] %>%
-  group_by(name) %>%
-  mutate(length = st_length(geometry)) %>%
-  summarize(length_m = sum(length)/1609.34)
+elev <- macleish_layers[["contours_3m"]] %>%
+   st_transform(4326) 
 
-trails_linestring <- trails_pt2 %>%
-  st_cast("LINESTRING", name)
-
-trails_linestring<- trails_linestring%>%
-  st_cast()
-
-macleish_map <- leaflet() %>%
-  addTiles() %>%
-  addPolygons(data = trails_linestring, weight = 1)
-
-macleish_map
-
-```
-
-```{r, message = FALSE, warning = FALSE, include = FALSE, error = FALSE}
-
-trails_slope <- trails_inbound %>%
-  group_by(name) %>%
-  mutate(slope = abs(c(NA, diff(ELEV_M))), len = abs(c(NA, diff(SHAPE_LEN)))) %>%
-  filter(!is.na(slope)) %>%
-
-  summarize(avg_slope_m = mean(slope/len), tot_change = sum(slope))
-            
-trails_temp <- trails_pt %>%
-  group_by(name) %>%
-  mutate(slope = abs(c(NA, diff(ELEV_M))), len = abs(c(NA, diff(SHAPE_LEN)))) %>%
-  filter(!is.na(slope))
-
-df_trails <- as.data.frame(trails_slope) %>%
-  select(name, avg_slope_m)%>%
-  filter(avg_slope_m>0)
-df_trails2 <- as.data.frame(trails_temp)%>%
-  select(name, slope, len)%>%
-  filter(slope>0)
-  summarize(avg_slope_m = mean(slope/len), tot_change = sum(slope)) %>%
-  mutate(lvl = ((avg_slope_m)*100)) %>%
-  arrange(name)
+ trails_inbound <- elev %>%
+   st_intersection(macleish_layers[["trails"]])
+ 
+ trails_pt<- st_cast(trails_inbound, "POINT")
 
 trails <- macleish_layers[["trails"]] %>%
   group_by(name) %>%
   mutate(length = st_length(geometry)) %>%
   summarize(length_m = sum(length)/1609.34)
-
-```
-
-```{r, message = FALSE, warning = FALSE, label = "Merge Into another Code", include = FALSE, error = FALSE}
-
-
 ```
 One way to distinguish the difficulty of the trails is through slope. Below are tables breaking up the difficulty into "easy," "moderate," and "hard." These tend to be arbitrary classifications, but are necessary for to distinguish a more intensive hike, such as the Vernal Pool Loop compared to the walk into the station at the beginning of the driveway.
 ```{r, results = 'asis', message = FALSE, warning = FALSE, label = "Difficulty Level", error = FALSE}
-temp <- data.frame(trails_inbound) %>%
+trails_slope <- data.frame(trails_inbound) %>%
   group_by(name) %>%
   mutate(slope = abs(c(NA, diff(ELEV_M))), len = abs(c(NA, diff(SHAPE_LEN)))) %>%
   filter(name != "Easy Out", !is.na(slope)) %>%
   select(name, SHAPE_LEN, ELEV_M, slope, len) %>%
-  mutate(slope_m = slope / len) %>%
-  summarize(avg_slope_m = mean(slope_m), total_len = sum(SHAPE_LEN), tot_change = sum(slope), lvl = avg_slope_m * 20)
+  summarize(total_len = sum(SHAPE_LEN), tot_change = sum(slope), avg_slope_m = tot_change/total_len)
+
+x <- 10/max(trails_slope$avg_slope_m)
+y <- 10/max(trails_slope$total_len)
+
+trails_slope <- trails_slope %>%
+  mutate(slope_level = avg_slope_m * x, len_level = total_len * y)
 
 ```
-mutate_all(funs(replace(., is.na(.), 0))))
-```{r}
-hard_slope <- temp %>%
-  filter(avg_slope_m > 20) %>%
-  mutate(Hard_Trails = name, avg_slope_per_m = avg_slope_m, total_elev_change = tot_change) %>%
-  select(-name, -avg_slope_m, -tot_change)
 
+```{r}
 writeLines("td, th { padding : 6px } th { background-color : blue ; color : white; border : 1px solid white; } td { color : black ; border : 1px solid blue }", con = "mystyle.css")
-hard_table <- hard_slope 
-  knitr::kable(hard_table, format = "html") 
+  knitr::kable(trails_slope, format = "html") 
 ```
-**Table 1.** Trail with the largest elevation change per meter.
 
-```{r}
-moderate_slope <- temp %>%
-  filter(avg_slope_m < 20, avg_slope_m > 2) %>%
-  mutate(Moderate_Trails = name, avg_slope_per_m = avg_slope_m, total_elev_change = tot_change) %>%
-  select(-name, -avg_slope_m, -tot_change)
-
-writeLines("td, th { padding : 6px } th { background-color : blue ; color : white; border : 1px solid white; } td { color : black ; border : 1px solid blue }", con = "mystyle.css")
-moderate_table <- moderate_slope
-knitr::kable(moderate_table, format = "html")
-```
-**Table 2.** Trails with median elevation changes per meter.
-
-```{r}
-easy_slope <- temp %>%
-  filter(avg_slope_m < 2) %>%
-  mutate(Easy_Trails = name, avg_slope_per_m = avg_slope_m, total_elev_change = tot_change) %>%
-  select(-name, -avg_slope_m, -tot_change)
-
-writeLines("td, th { padding : 6px } th { background-color : blue ; color : white; border : 1px solid white; } td { color : black ; border : 1px solid blue }", con = "mystyle.css")
-easy_table <- easy_slope 
-knitr::kable(easy_table, format = "html")
-```
-**Table 3.** Trail with the smallest elevation changes per meter.
-
-```{r}
-#the dataframes of the slope difficulty split up into three different lists
-hardsegments <- trails_slope %>%
-  filter(lvl > 20)
-
-moderatesegments <- trails_slope %>%
-  filter(lvl < 20, avg_slope_m > 2)
-
-easysegments <- trails_slope %>%
-  filter(lvl < 2)
-
-```
 
 
 ```{r, message = FALSE, warning = FALSE, label = "Our Map Code", error = FALSE}
