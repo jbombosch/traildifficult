@@ -28,24 +28,6 @@ library(leaflet)
 devtools::install_github("beanumber/macleish")
 ```
 
-<<<<<<< HEAD
-trails_linestring <- trails_pt2 %>%
-  st_cast("LINESTRING", name)
-
-trails_linestring<- trails_linestring%>%
-  st_cast()
-
-macleish_map <- leaflet() %>%
-  addTiles() %>%
-  addPolygons(data = trails_linestring, weight = 1)
-
-macleish_map
-
-```
-=======
-```{r, message = FALSE, warning = FALSE, include = FALSE, error = FALSE}
->>>>>>> dbc5685d83e455ebf35406bccc1a627c5c1fe179
-
 ```{r}
 trails_slope <- trails_inbound %>%
   group_by(name) %>%
@@ -72,18 +54,7 @@ temp <- data.frame(trails_inbound) %>%
   mutate(slope = abs(c(NA, diff(ELEV_M))), len = abs(c(NA, diff(SHAPE_LEN)))) %>%
   filter(name != "Easy Out", !is.na(slope)) %>%
   select(name, SHAPE_LEN, ELEV_M, slope, len) %>%
-  mutate(slope_m = slope / len) %>%
-  summarize(avg_slope_m = mean(slope_m), total_len = sum(SHAPE_LEN), tot_change = sum(slope), lvl = avg_slope_m * 20)
-
-<<<<<<< HEAD
-=======
-#trail difficulty classified by average slope
-
-temp <- data.frame(trails_slope) %>%
-  filter(name != "Easy Out") %>%
-  select(-geometry)
-
->>>>>>> dbc5685d83e455ebf35406bccc1a627c5c1fe179
+  summarize(avg_slope_m = mean(slope / len), total_len = sum(SHAPE_LEN), tot_change = sum(slope), lvl = avg_slope_m * 20)
 ```
 mutate_all(funs(replace(., is.na(.), 0))))
 ```{r}
