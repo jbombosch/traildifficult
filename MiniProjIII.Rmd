@@ -9,7 +9,11 @@ output:
     css: mystyle.css
 ---
 
-It is not about the destination but the journey. The MacLeish field station is a valuable asset for the Smith community. It has approximately four miles of maintained trails accessible to visitors. Insuring accessibilty is important for all levels of hiking experience and will help curate a fun experience for visitors. We aimed to classify these trails as “Easy,” “Moderate,” or “Difficult” based on their length and change in elevation. We will utilize spatial data to develop a heuristic that will classify these (or any other) trails based on their difficulty.
+It's not about the destination but the journey. The MacLeish field station is a valuable asset for the Smith community. It has approximately four miles of maintained trails accessible to visitors. Ensuring accessibility is important for all levels of hiking experience and will help curate a fun experience for visitors. We aimed to classify these trails as “Easy,” “Moderate,” or “Difficult” based on their length and change in elevation. We will utilize spatial data to develop a heuristic that will classify these (or any other) trails based on their difficulty.
+
+The data set used is the macleish package authored by Ben Baumer, as well as other contributors. This data set contains map information of the 260-acre campus, as well as live weather data taken at 10 minute intervals and stored on a computer in McConnell Hall at Smith College. 
+
+In this analysis, we used the maps layer, focusing on mapped points of interest, elevation, trails to map the difficulty of the trails.
 
 Today `r format(Sys.Date(), "%B %e, %Y")`.
 
@@ -23,27 +27,8 @@ library(leaflet)
 
 devtools::install_github("beanumber/macleish")
 ```
-NEW STUFF
-Here is some set up stuff
 
-Insert something about this graphic.....
-```{r, message = FALSE, warning = FALSE, label = "Data Manipulating", include = FALSE, error = FALSE}
-# find intersection point of trails and elevation
-elev <- macleish_layers[["contours_3m"]] %>%
-  st_transform(4326) 
-trails_inbound <- elev %>%
-  st_intersection(macleish_layers[["trails"]])
-
-# OK so this is what I have been working on. THey look funky. What I did. I have inbound MULTIPOINT cast to POINT and then I turn all Points into multipoint and then I can turn it into a graphable lines string. I think in casting it into point We lost labels on each data point. We lost "name" so to solve this I think we can 1. Figure out how not to lose data in trails_point or 2. We can do each trail indicidually which for time reasons is not great. THis is the most important thing to fix. Once we geth this to work everything following will probably run smoothly and we will have it in a format that we can plot. We can also then delete the data frames that I created yesterday. Until we fix this though please do not delete. KK luv ya and see ya later!
-
-trails_pt<- trails_inbound%>%
-  group_by(name) %>%
-  st_cast( "POINT")
-
-trails_pt2 <- trails_pt %>%
-  group_by(grepl("POINT", name)) %>%
-  summarize(N = n())
-
+<<<<<<< HEAD
 trails_linestring <- trails_pt2 %>%
   st_cast("LINESTRING", name)
 
@@ -57,6 +42,9 @@ macleish_map <- leaflet() %>%
 macleish_map
 
 ```
+=======
+```{r, message = FALSE, warning = FALSE, include = FALSE, error = FALSE}
+>>>>>>> dbc5685d83e455ebf35406bccc1a627c5c1fe179
 
 ```{r}
 trails_slope <- trails_inbound %>%
@@ -77,8 +65,7 @@ trails <- macleish_layers[["trails"]] %>%
 
 
 ```
-The trail difficulty as grouped together by average slope into easy, moderate, and hard. Is this the same as the trail difficulty grouped by trail length?
-
+One way to distinguish the difficulty of the trails is through slope. Below are tables breaking up the difficulty into "easy," "moderate," and "hard." These tend to be arbitrary classifications, but are necessary for to distinguish a more intensive hike, such as the Vernal Pool Loop compared to the walk into the station at the beginning of the driveway.
 ```{r, results = 'asis', message = FALSE, warning = FALSE, label = "Difficulty Level", error = FALSE}
 temp <- data.frame(trails_inbound) %>%
   group_by(name) %>%
@@ -88,6 +75,15 @@ temp <- data.frame(trails_inbound) %>%
   mutate(slope_m = slope / len) %>%
   summarize(avg_slope_m = mean(slope_m), total_len = sum(SHAPE_LEN), tot_change = sum(slope), lvl = avg_slope_m * 20)
 
+<<<<<<< HEAD
+=======
+#trail difficulty classified by average slope
+
+temp <- data.frame(trails_slope) %>%
+  filter(name != "Easy Out") %>%
+  select(-geometry)
+
+>>>>>>> dbc5685d83e455ebf35406bccc1a627c5c1fe179
 ```
 mutate_all(funs(replace(., is.na(.), 0))))
 ```{r}
@@ -138,29 +134,8 @@ easysegments <- trails_slope %>%
   filter(lvl < 2)
 
 ```
-Trail difficulty by length only. 
-Error: both operands of the expression should be in "units" objects
-
-This chunk below should be turned into a table!!!! :) 
-```{r echo = FALSE, error=FALSE}
-easy_length <- trails %>%
-  filter(length_m < 1) #total_length mile is not showing up as something with untis
-
-moderate_length <- trails %>%
-  filter(length_m > 1, length_m < 5)
-
-#print(easy)
-#print(moderate)
-#print(hard)
-#print(easysegments)
-#print(moderatesegments)
-#print(hardsegments)
 
 
-print(easy_length)
-print(moderate_length)
-```
-Here are map elements and our final map things
 ```{r, message = FALSE, warning = FALSE, label = "Our Map Code", error = FALSE}
 # other variables to be mapped
 buildings<- macleish_layers[["boundary"]] %>%
@@ -215,32 +190,10 @@ Our_map
 
 
 ```
+There is a very clear use for the ranking of difficulty: a map can be made to be displayed at Macleish that shows both the difficulty by trail length as well as average slope over the hike. With this information, visitors will be more empowered to choose their trail, rather than attempting to figure out a difficulty by the name. This would be a low cost solution: requiring a board at the beginning of the trails, as well as color coded blazes on trees throughout the trails. A good time to mark trails and create a map at the beginning would be during the early summer, when there are interns available at the station who are engaged in similar projects. Blazing could occur concurrently with trail maintenance to further streamline the process. This would require paint and general maintanence for future years, but nothing too labor intensive for the outcome. 
 
-
-#difficulty by length and average elevation for difficulty
-
-
-PLEASE DO NOT ERASE CHUNK BELOW SO THAT I CAN PICK UP WHERE I LEFT OFF AND KNOW WHAT I AM THINKING! :D
-```{r}
-#Delete later. what is in this package
-names(macleish_layers)
-```
-THIS IS ALSO PART OF MY THOUGHT PROCESS> PLEASE DO NOT ERASE
-```{r}
-trails_inbound%>%
-  mutate(computed_length = st_length(geometry))%>%
-  group_by(desc(name))
-
-#join by geometry. dataframes but need to covert it into an sf otherwise it will not plot. So make into a data frame and join it and then tyrn it back into spacial data
-#cast it to a line string. to get trail
-#percent slope and then total length of segments.
-#short but steep
-# do not actually mutate so that we have the same length 
-# then look at coloring the segments
-# if weather season looking at slope and winter snow. Looking at where do we clear trees. none of the trails get close enough to a stream maybe in the future with new stream. But not yet. Seein if they can build one towards the beaver trail. Would not be an easy trail under in optimal weather.
-#seeps on the hillside. east slope. that makes things muddier = harder
- 
-```
+The Pioneer Valley is a beautiful location, and one of the best ways to experience the valley is through hiking. Many Smith College students want to be able to access this, but most hiking trails are difficult to reach on the Pioneer Valley Public Transport. For example, it takes about thirty minutes to go to Fitzgerald Lake on the bus, but in terms of elevation change and length, the conservation area is far from exciting. The access to a range of trail difficulty is a valuable asset to the students and part of that access is providing information about the difficulty level of different trails both through the elevation changes, as well as length.
 
 Footnotes: 
 [^1] Link to the [repository](https://github.com/jbombosch/traildifficult)
+[^2] Link to the [macleish repository](https://github.com/beanumber/macleish)
